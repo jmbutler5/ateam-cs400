@@ -68,6 +68,7 @@ public class Main extends Application {
 		// Generate imageview control instance and add to window
 		//root.setCenter(newImage("headshot.jpg"));
 		// Add the stuff and set the primary stage
+		primaryStage.setTitle(APP_TITLE);
         	primaryStage.setScene(mainScene);
         	primaryStage.show();
 	}
