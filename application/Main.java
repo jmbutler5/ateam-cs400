@@ -49,11 +49,20 @@ public class Main extends Application {
 	// the user selected which might become the selected user
 	private String currentUser;
 
-
-	
+	Scene startScene, mainScene;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		// Start Scene
+		// TODO: I only did the confirm button which leads to the next scene,, so kinda
+		// need the rest of it
+		Button confirm = new Button("Confirm");
+		confirm.setOnAction(e -> primaryStage.setScene(mainScene));
+		VBox layout1 = new VBox(20); // arbitrary root
+		layout1.getChildren().add(confirm); // placing this button willy-nilly
+		startScene = new Scene(layout1, WINDOW_WIDTH, WINDOW_HEIGHT); // arbitrary scene setting
+
+		// Main Scene
 		// save args example
 		args = this.getParameters().getRaw();
 
@@ -66,7 +75,7 @@ public class Main extends Application {
 		rootPane.setCenter(rootGrid);
 
 		// root.setBottom(new Button("Done"));
-		Scene mainScene = new Scene(rootPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+		mainScene = new Scene(rootPane, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		topBox();
 		menuBox();
@@ -76,7 +85,8 @@ public class Main extends Application {
 		// root.setCenter(newImage("headshot.jpg"));
 		// Add the stuff and set the primary stage
 		primaryStage.setTitle(APP_TITLE);
-		primaryStage.setScene(mainScene);
+
+		primaryStage.setScene(startScene);
 		primaryStage.show();
 	}
 
@@ -120,7 +130,7 @@ public class Main extends Application {
 		Label l2 = new Label("Selected User: ");
 
 		// TODO: Replace with dynamic label that displays the current user//
-		//selectedUser = "JohnDoe";
+		// selectedUser = "JohnDoe";
 		currentUser = "JaneDoe";
 		Label l3 = new Label(socialNetwork.getSelected());
 		//////////////////////////////////////////////////////////////////
