@@ -255,11 +255,111 @@ public class Main extends Application {
 		return imageView;
 
 	}
+	
+	/**
+	 * Displays exit GUI
+	 * 
+	 * @param primaryStage
+	 * @throws Exception
+	 */
+	public void exiting(Stage primaryStage) throws Exception {
+		title = ("exit");
+		HBox buttons = new HBox();
+    	HBox file = new HBox();
+
+    	file.setSpacing(5);
+    	
+    	buttons.setPadding(new Insets(5, 5, 5, 5));
+    	buttons.setSpacing(5);
+    	
+    	TextField fileName = new TextField();
+    	Label label = new Label("Enter File Name: ");
+    	Button save = new Button();
+    	save.setPadding(new Insets(5, 50, 5, 50));
+    	save.setText("Save");
+    	
+    	Button nSave = new Button();
+    	nSave.setPadding(new Insets(5, 20, 5, 20));
+    	nSave.setText("Exit without saving");
+    		
+    	buttons.getChildren().add(save);
+    	buttons.getChildren().add(nSave);
+    	
+    	file.getChildren().add(label);
+    	file.getChildren().add(fileName);
+
+
+	// Main layout is Border Pane example (top,left,center,right,bottom)
+    	BorderPane root = new BorderPane();
+    	root.setPadding(new Insets(10, 10, 10, 10));
+
+	root.setTop(file);
+    root.setBottom(buttons);
+    
+    
+	Scene mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+	// Add the stuff and set the primary stage
+    	primaryStage.setTitle(title);
+    	primaryStage.setScene(mainScene);
+    	primaryStage.show();
+	}
+	
+	
+	/**
+	 * Displays welcome GUI
+	 * 
+	 * @param primaryStage
+	 * @throws Exception
+	 */
+	public void welcome(Stage primaryStage) throws Exception {
+		WINDOW_WIDTH = 325;
+		title = ("Welcome");
+
+    	HBox file = new HBox();
+    	HBox button = new HBox();
+    	file.setSpacing(5);
+    	
+    	Button open = new Button();
+    	open.setText("Open");
+
+    	TextField fileName = new TextField();
+    	Label label = new Label("Enter File Name: ");
+    	
+    	Button confirm = new Button();
+    	confirm.setText("Confirm");
+    	
+    	
+    	file.getChildren().add(label);
+    	file.getChildren().add(fileName);
+    	file.getChildren().add(open);
+    	
+    	button.getChildren().add(confirm);
+    	button.setPadding(new Insets(0, 0, 0, 118));
+
+    	
+    	BorderPane root = new BorderPane();
+    	root.setPadding(new Insets(10, 10, 10, 10));
+    	
+    	root.setTop(file);
+        root.setBottom(button);
+        
+        
+    	Scene mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    	// Add the stuff and set the primary stage
+        	primaryStage.setTitle(title);
+        	primaryStage.setScene(mainScene);
+        	primaryStage.show();
+
+	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		launch(args);
+		//exiting(primaryStage); //This method is the exit screen
+		//welcome(primaryStage); //This method is the welcome screen
 	}
 }
