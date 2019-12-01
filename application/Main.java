@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,6 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -44,23 +46,27 @@ public class Main extends Application {
 	private GridPane rootGrid = new GridPane();
 
 	// rootGrid and other boxes are arranged on BorderPane
-	private BorderPane rootPane = new BorderPane();
+	private BorderPane startPane = new BorderPane();
+	private BorderPane mainPane = new BorderPane();
+	private BorderPane exitPane = new BorderPane();
 
 	// the user selected which might become the selected user
 	private String currentUser;
 
-	Scene startScene, mainScene;
+	Scene startScene, mainScene, exitScene;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// Start Scene
-		// TODO: I only did the confirm button which leads to the next scene,, so kinda
-		// need the rest of it
-		Button confirm = new Button("Confirm");
-		confirm.setOnAction(e -> primaryStage.setScene(mainScene));
-		VBox layout1 = new VBox(20); // arbitrary root
-		layout1.getChildren().add(confirm); // placing this button willy-nilly
-		startScene = new Scene(layout1, WINDOW_WIDTH, WINDOW_HEIGHT); // arbitrary scene setting
+		// Welcome Scene
+		welcome();
+		// add confirm button (move from start scene to main scene)
+		VBox confirm = new VBox();
+		Button toMain = new Button("Confirm");
+		toMain.setOnAction(e -> primaryStage.setScene(mainScene)); // on click - goes to mainScene
+		confirm.getChildren().add(toMain);
+		startPane.setBottom(confirm);
+
+		startScene = new Scene(startPane, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		// Main Scene
 		// save args example
@@ -72,20 +78,29 @@ public class Main extends Application {
 		rootGrid.setHgap(5);
 
 		// Add the main grid to the BorderPane
-		rootPane.setCenter(rootGrid);
+		mainPane.setCenter(rootGrid);
 
-		// root.setBottom(new Button("Done"));
-		mainScene = new Scene(rootPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+		// add exit button
+		VBox done = new VBox();
+		Button toExit = new Button("Done");
+		toExit.setOnAction(e -> primaryStage.setScene(exitScene)); // on click - goes to exitScene
+		done.getChildren().add(toExit);
+		mainPane.setBottom(done);
+
+		mainScene = new Scene(mainPane, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		topBox();
 		menuBox();
 		networkBox();
 
+		// Exiting Scene
+		exitScene = new Scene(exitPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+		exiting();
+
 		// Generate imageview control instance and add to window
-		// root.setCenter(newImage("headshot.jpg"));
+		// startPane.setCenter(newImage("headshot.jpg"));
 		// Add the stuff and set the primary stage
 		primaryStage.setTitle(APP_TITLE);
-
 		primaryStage.setScene(startScene);
 		primaryStage.show();
 	}
@@ -96,9 +111,9 @@ public class Main extends Application {
 	 * @throws FileNotFoundException
 	 */
 	private void topBox() throws FileNotFoundException {
-		rootPane.setTop(newImage("socialnetwork.jpg"));
-		BorderPane.setAlignment(rootPane, Pos.TOP_RIGHT);
-		BorderPane.setMargin(rootPane, new Insets(12, 12, 12, 12));
+		mainPane.setTop(newImage("socialnetwork.png"));
+		BorderPane.setAlignment(mainPane, Pos.TOP_RIGHT);
+		BorderPane.setMargin(mainPane, new Insets(12, 12, 12, 12));
 	}
 
 	/**
@@ -255,103 +270,57 @@ public class Main extends Application {
 		return imageView;
 
 	}
-	
-	/**
-	 * Displays exit GUI
-	 * 
-	 * @param primaryStage
-	 * @throws Exception
-	 */
-	public void exiting(Stage primaryStage) throws Exception {
-		title = ("exit");
-		HBox buttons = new HBox();
-    	HBox file = new HBox();
 
-    	file.setSpacing(5);
-    	
-    	buttons.setPadding(new Insets(5, 5, 5, 5));
-    	buttons.setSpacing(5);
-    	
-    	TextField fileName = new TextField();
-    	Label label = new Label("Enter File Name: ");
-    	Button save = new Button();
-    	save.setPadding(new Insets(5, 50, 5, 50));
-    	save.setText("Save");
-    	
-    	Button nSave = new Button();
-    	nSave.setPadding(new Insets(5, 20, 5, 20));
-    	nSave.setText("Exit without saving");
-    		
-    	buttons.getChildren().add(save);
-    	buttons.getChildren().add(nSave);
-    	
-    	file.getChildren().add(label);
-    	file.getChildren().add(fileName);
-
-
-	// Main layout is Border Pane example (top,left,center,right,bottom)
-    	BorderPane root = new BorderPane();
-    	root.setPadding(new Insets(10, 10, 10, 10));
-
-	root.setTop(file);
-    root.setBottom(buttons);
-    
-    
-	Scene mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	// Add the stuff and set the primary stage
-    	primaryStage.setTitle(title);
-    	primaryStage.setScene(mainScene);
-    	primaryStage.show();
-	}
-	
-	
 	/**
 	 * Displays welcome GUI
-	 * 
-	 * @param primaryStage
-	 * @throws Exception
 	 */
-	public void welcome(Stage primaryStage) throws Exception {
-		WINDOW_WIDTH = 325;
-		title = ("Welcome");
+	public void welcome() {
+		HBox file = new HBox();
+		file.setSpacing(5);
 
-    	HBox file = new HBox();
-    	HBox button = new HBox();
-    	file.setSpacing(5);
-    	
-    	Button open = new Button();
-    	open.setText("Open");
+		Button open = new Button("Open");
 
-    	TextField fileName = new TextField();
-    	Label label = new Label("Enter File Name: ");
-    	
-    	Button confirm = new Button();
-    	confirm.setText("Confirm");
-    	
-    	
-    	file.getChildren().add(label);
-    	file.getChildren().add(fileName);
-    	file.getChildren().add(open);
-    	
-    	button.getChildren().add(confirm);
-    	button.setPadding(new Insets(0, 0, 0, 118));
+		TextField fileName = new TextField();
+		Label label = new Label("Enter File Name: ");
 
-    	
-    	BorderPane root = new BorderPane();
-    	root.setPadding(new Insets(10, 10, 10, 10));
-    	
-    	root.setTop(file);
-        root.setBottom(button);
-        
-        
-    	Scene mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+		file.getChildren().addAll(label, fileName, open);
 
-    	// Add the stuff and set the primary stage
-        	primaryStage.setTitle(title);
-        	primaryStage.setScene(mainScene);
-        	primaryStage.show();
+		// confirm -> button.setPadding(new Insets(0, 0, 0, 118));
+		startPane.setPadding(new Insets(10, 10, 10, 10));
 
+		startPane.setTop(file);
+	}
+
+	/**
+	 * Displays exit GUI
+	 */
+	public void exiting() {
+		HBox buttons = new HBox();
+		HBox file = new HBox();
+
+		file.setSpacing(5);
+
+		buttons.setPadding(new Insets(5, 5, 5, 5));
+		buttons.setSpacing(5);
+
+		TextField fileName = new TextField();
+		Label label = new Label("Enter File Name: ");
+		Button save = new Button("Save");
+		save.setPadding(new Insets(5, 50, 5, 50));
+
+		Button nSave = new Button("Exit without saving");
+		nSave.setPadding(new Insets(5, 20, 5, 20));
+		nSave.setOnAction(e -> Platform.exit());
+
+		buttons.getChildren().add(save);
+		buttons.getChildren().add(nSave);
+		file.getChildren().add(label);
+		file.getChildren().add(fileName);
+
+		// Main layout is Border Pane example (top,left,center,right,bottom)
+		exitPane.setPadding(new Insets(10, 10, 10, 10));
+		exitPane.setTop(file);
+		exitPane.setBottom(buttons);
 	}
 
 	/**
@@ -359,7 +328,5 @@ public class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		launch(args);
-		//exiting(primaryStage); //This method is the exit screen
-		//welcome(primaryStage); //This method is the welcome screen
 	}
 }
