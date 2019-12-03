@@ -275,20 +275,21 @@ public class Main extends Application {
 	 * Displays welcome GUI
 	 */
 	public void welcome() {
-		HBox file = new HBox();
-		file.setSpacing(5);
+		HBox fileNameBox = new HBox();
+		fileNameBox.setSpacing(5);
 
 		Button open = new Button("Open");
 
 		TextField fileName = new TextField();
-		Label label = new Label("Enter File Name: ");
+		Label label = new Label("Enter file name to read from: ");
 
-		file.getChildren().addAll(label, fileName, open);
+		fileNameBox.getChildren().addAll(label, fileName, open);
 
 		// confirm -> button.setPadding(new Insets(0, 0, 0, 118));
 		startPane.setPadding(new Insets(10, 10, 10, 10));
 
-		startPane.setTop(file);
+//		startPane.setTop(fileNameBox);
+		startPane.setCenter(fileNameBox);
 	}
 
 	/**
@@ -304,7 +305,7 @@ public class Main extends Application {
 		buttons.setSpacing(5);
 
 		TextField fileName = new TextField();
-		Label label = new Label("Enter File Name: ");
+		Label label = new Label("Enter file name to save to: ");
 		Button save = new Button("Save");
 		save.setPadding(new Insets(5, 50, 5, 50));
 
