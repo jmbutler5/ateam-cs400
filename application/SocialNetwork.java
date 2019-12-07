@@ -35,53 +35,100 @@ public class SocialNetwork {
 	/**
 	 * adds the specified user to the network
 	 * 
+	 * @author Chase Flackey
 	 * @param user the name of the user to be added to the network
 	 */
 	void addUser(String user) {
 		// TODO
+		graph.addVertex(user);
 		log.add(ADD_COMMAND + " " + user);
 	}
 
 	/**
 	 * removes the specified user from the network
 	 * 
+	 * @author Chase Flackey
 	 * @param user the name of the user to be removed from the network
 	 */
 	void removeUser(String user) {
-		// TODO
+		graph.removeVertex(user);
 		log.add(REMOVE_COMMAND + " " + user);
 	}
 
 	/**
 	 * Makes user1 and user2 friends in the network
 	 * 
+	 * @author Chase Flackey
 	 * @param user1 the name of one user to become friends
 	 * @param user2 the name of the other user to become friends
 	 */
 	void addFriend(String user1, String user2) {
-		// TODO
+		graph.addEdge(user1, user2);
 		log.add(ADD_COMMAND + " " + user1 + " " + user2);
 	}
 
 	/**
 	 * ends the friendship between these two users
 	 * 
+	 * @author Chase Flackey
 	 * @param user1 the name of one user in the network
 	 * @param user2 the name of another user in the network
 	 */
 	void removeFriend(String user1, String user2) {
-		// TODO
+		graph.removeEdge(user1, user2);
 		log.add(REMOVE_COMMAND + " " + user1 + " " + user2);
 	}
 
 	/**
 	 * finds the number of connected groups in the network
 	 * 
+	 * @author Chase Flackey
 	 * @return returns the number of connected groups in the network
 	 */
 	public int getGroups() {
-		// TODO
-		return 0;
+		ArrayList<List<String>> conComponents = new ArrayList<List<String>>(graph.order());
+		
+		// First generates a list of connected vertices for each vertex in the
+		// network.
+		List<String> allUsers = graph.getAllVertices();
+		for(String user : allUsers) {
+			List<String> connected = new ArrayList<String>(graph.order());
+			connected = getFriends(user, connected);
+			// Each list is compared to a list of existing unique components. If the
+			// list does not match an existing connected component, this list is
+			// added to the unique components and the # of connected components is
+			// incremented.
+			Boolean duplicate = false;
+			for(int i = 0; i < conComponents.size(); i++) {
+				if(conComponents.get(i).containsAll(connected)) {
+					duplicate = true;
+				}
+			}
+			if(!duplicate) conComponents.add(connected);
+		}	
+		return conComponents.size();
+	}
+	
+	/**
+	 * Private recursive method to a list of 
+	 * all users connected to a given user.
+	 * @param user the current vertex in the network
+	 * @param connected a list of all previously visited users in the traversal
+	 */
+	public List<String> getFriends(String user, List<String> connected) {
+		
+		List<String> friends = allFriends(user);
+		//Base case, list of friends is empty
+		if(friends.size() == 0) {
+			connected.add(user);
+		}
+		for(String friend : friends) {
+			if(!connected.contains(friend)) {
+				connected.add(friend);
+				getFriends(friend, connected);
+			}
+		}
+		return connected;
 	}
 
 	/**
@@ -112,12 +159,12 @@ public class SocialNetwork {
 	/**
 	 * finds all friends of the specified user
 	 * 
+	 * @author Chase Flackey
 	 * @param user the user whose friends will be found
 	 * @return returns a list of people who are friends with user
 	 */
-	public List<UserStruct> allFriends(String user) {
-		// TODO
-		return null;
+	public List<String> allFriends(String user) {
+		return graph.getAdjacentVerticesOf(user);
 	}
 
 	public String getSelected() {
@@ -126,9 +173,9 @@ public class SocialNetwork {
 
 	//TODO we might want to select the user by the actual instance instead of their name.
 	public boolean select(String user) {
-		if(graph.contains(new User(user))) {
+		//if(graph.contains(new User(user))) {
 			//TODO
-		}
+		//}
 		return false;
 	}
 

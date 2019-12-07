@@ -106,7 +106,7 @@ public class Graph implements GraphADT {
 
 	/**
      * Add the edge from vertex1 to vertex2
-     * to this graph.  (edge is directed and unweighted)
+     * to this graph.  (edge is undirecteed and unweighted)
      * If either vertex does not exist,
      * add vertex, and add edge, no exception is thrown.
      * If the edge exists in the graph,
@@ -133,12 +133,13 @@ public class Graph implements GraphADT {
 			v2 = vertices.indexOf(vertex2);
 		}
 		matrix[v1][v2] = true;
+		matrix[v2][v1] = true;
 		edgeCount ++;
 	}
 	
 	/**
      * Remove the edge from vertex1 to vertex2
-     * from this graph.  (edge is directed and unweighted)
+     * from this graph.  (edge is undirected and unweighted)
      * If either vertex does not exist,
      * or if an edge from vertex1 to vertex2 does not exist,
      * no edge is removed and no exception is thrown.
@@ -158,6 +159,7 @@ public class Graph implements GraphADT {
 		if (v1 == -1 || v2 == -1)
 			return;
 		matrix[v1][v2] = false;
+		matrix[v2][v1] = false;
 		edgeCount --;
 	}	
 
@@ -165,8 +167,8 @@ public class Graph implements GraphADT {
      * Returns a Set that contains all the vertices
      * 
 	 */
-	public Set<String> getAllVertices() {
-		Set<String> verticeSet =  new HashSet<String>();
+	public List<String> getAllVertices() {
+		List<String> verticeSet =  new ArrayList<String>();
 		vertices.forEach((n) -> verticeSet.add(n));
 		return verticeSet;
 	}

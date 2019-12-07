@@ -89,7 +89,7 @@ public interface GraphADT {
      * 
      * @return a Set<String> which contains all the vertices in the graph
      */
-    public Set<String> getAllVertices();
+    public List<String> getAllVertices();
     
     
     /**
