@@ -1,15 +1,16 @@
 .PHONY = compile run jar runjar zip all clean
 
 #TODO: edit with path to your javac (java compiler)
-JC =  /mnt/c/Program Files/AdoptOpenJDK/jre-11.0.4.11-hotspot/bin/
+JC =  /usr/lib/jvm/adoptopenjdk-11-jdk-hotspot/bin/javac 
+
 #TODO: edit with path to your java (java runtime environment)
-JRE =  /mnt/c/Program Files/AdoptOpenJDK/jdk-11.0.4.11-hotspot/bin/
+JRE =  /usr/lib/jvm/adoptopenjdk-11-jdk-hotspot/bin/java 
 
 #TODO: edit with path to your module-path for javafx
 MP = --module-path /mnt/c/Users/john/Google Drive (cflackey@wisc.edu)/Eclipse/Java_Fx/javafx-sdk-11.0.2/lib --add-modules javafx.controls,javafx.fxml -Dfile.encoding=UTF-8 
 
 #TODO: edit with your classpath from Eclipse 
-CP = -classpath ./
+CP = -classpath /mnt/c/Users/john/Google Drive (cflackey@wisc.edu)/Eclipse/CS400/HelloFX
 
 SRC = application/*.java   
 
