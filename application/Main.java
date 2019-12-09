@@ -304,10 +304,11 @@ public class Main extends Application {
 		buttons.setPadding(new Insets(5, 5, 5, 5));
 		buttons.setSpacing(5);
 
-		TextField fileName = new TextField();
+		TextField fileName = new TextField("SocialNetworkSave");
 		Label label = new Label("Enter file name to save to: ");
 		Button save = new Button("Save");
 		save.setPadding(new Insets(5, 50, 5, 50));
+		save.setOnAction(e -> socialNetwork.readFromFile(fileName.getText()));
 
 		Button nSave = new Button("Exit without saving");
 		nSave.setPadding(new Insets(5, 20, 5, 20));
@@ -322,6 +323,7 @@ public class Main extends Application {
 		exitPane.setPadding(new Insets(10, 10, 10, 10));
 		exitPane.setTop(file);
 		exitPane.setBottom(buttons);
+		
 	}
 
 	/**

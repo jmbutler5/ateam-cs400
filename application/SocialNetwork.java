@@ -339,7 +339,7 @@ public class SocialNetwork {
 	 * @return returns an error message if the data in the file is invalid, an empty
 	 *         string otherwise
 	 */
-	private String readFromFile(String filename) {
+	public String readFromFile(String filename) {
 		// TODO I'm waiting to test this until SocialNetwork is done
 		try {
 			Scanner input = new Scanner(new File(filename));
