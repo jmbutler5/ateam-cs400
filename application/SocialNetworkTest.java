@@ -50,5 +50,20 @@ class SocialNetworkTest {
 			fail("Incorrect number of groups detected");
 		}
 	}
-
+	
+	/**
+	 * Tests that mutualFriends returns expected list
+	 */
+	@Test
+	void test002_mutual_friends() {
+		network.addFriend("john","amy");
+		network.addFriend("amy","joe");
+		network.addFriend("john", "mike");
+		network.addFriend("joe","mike");
+		System.out.println(network.mutualFriends("john","joe"));
+		List<String> mutual = new ArrayList<String>();
+		mutual.add("amy");
+		//if(!network.mutualFriends("john","joe").equals(mutual))
+			//fail("Correct list of mutual friends not returned");
+	}
 }

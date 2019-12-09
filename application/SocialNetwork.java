@@ -11,7 +11,7 @@ public class SocialNetwork {
 
 	// the user being displayed
 	//TODO hardcoded
-	private UserStruct selectedUser = new User("John Doe");
+	private String selectedUser = "John Doe";
 
 	// keeps track of the log so we can print it to a file
 	// we have to actually keep track of operations (i.e. undo), so we can't just
@@ -39,7 +39,6 @@ public class SocialNetwork {
 	 * @param user the name of the user to be added to the network
 	 */
 	void addUser(String user) {
-		// TODO
 		graph.addVertex(user);
 		log.add(ADD_COMMAND + " " + user);
 	}
@@ -110,15 +109,16 @@ public class SocialNetwork {
 	}
 	
 	/**
-	 * Private recursive method to a list of 
-	 * all users connected to a given user.
+	 * Private recursive method to a list of all names in a connected group
+	 * 
+	 * Example: If john -> amy -> joe (john is friends with amy, amy is friends
+	 * with joe and john) then the returned list will contain john, amy, and joe.
 	 * @param user the current vertex in the network
 	 * @param connected a list of all previously visited users in the traversal
 	 */
 	public List<String> getFriends(String user, List<String> connected) {
 		
 		List<String> friends = allFriends(user);
-		//Base case, list of friends is empty
 		if(friends.size() == 0) {
 			connected.add(user);
 		}
@@ -134,26 +134,43 @@ public class SocialNetwork {
 	/**
 	 * finds the list of mutual friends of user1 and user 2
 	 * 
+	 * @author Chase Flackey
+	 * 
 	 * @param user1 the name of a user in the graph
 	 * @param user2 the name of another user in the graph
 	 * @return returns a List of users who have user1 and user2 as friends
 	 */
-	public List<UserStruct> mutualFriends(String user1, String user2) {
-		// TODO
-		return null;
+	public List<String> mutualFriends(String user1, String user2) {
+		
+		List<String> mutualFriends = new ArrayList<String>();
+		List<String> user1friends = graph.getAdjacentVerticesOf(user1);
+		List<String> user2friends = graph.getAdjacentVerticesOf(user2);
+		
+		for(String friend : user1friends) {
+			if (user2friends.contains(friend))
+				mutualFriends.add(friend);
+		}
+		return mutualFriends;
 	}
 
 	/**
-	 * finds the shorted path between user1 and user2
+	 * finds the shortest path between user1 and user2, using an implemenation
+	 * of Dijkstra's algorithm
+	 * 
+	 * @author Chase Flackey
 	 * 
 	 * @param user1 the name of a user in the graph
 	 * @param user2 the name of another user in the graph
 	 * @return returns a List which is the shortest path from user1 to user2 in the
 	 *         network
 	 */
-	public List<UserStruct> friendLink(String user1, String user2) {
-		// TODO
-		return null;
+	public List<String> friendLink(String user1, String user2) {
+		
+		//HashMap<String, String> 
+		
+		// TODO: Temporary implementation for GUI testing purposes
+		return graph.getAdjacentVerticesOf(user1);
+		
 	}
 
 	/**
@@ -165,10 +182,6 @@ public class SocialNetwork {
 	 */
 	public List<String> allFriends(String user) {
 		return graph.getAdjacentVerticesOf(user);
-	}
-
-	public String getSelected() {
-		return selectedUser.getName();
 	}
 
 	//TODO we might want to select the user by the actual instance instead of their name.
@@ -318,7 +331,7 @@ public class SocialNetwork {
 
 			break;
 		case SET_COMMAND:
-			selectedUser = new User(parameters[0]);
+			selectedUser = parameters[0];
 			break;
 		default:
 			// getParameters(String) already validates the command input, but just in case
