@@ -6,481 +6,492 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import javafx.scene.control.Alert;
 
 public class SocialNetwork {
 
-	// the user being displayed
-	private String selectedUser;
+    // the user being displayed
+    private String selectedUser;
 
-	// keeps track of the log so we can print it to a file
-	// we have to actually keep track of operations (i.e. undo), so we can't just
-	// print a representation of the network
-	private ArrayList<String> log;
+    // keeps track of the log so we can print it to a file
+    // we have to actually keep track of operations (i.e. undo), so we can't just
+    // print a representation of the network
+    private ArrayList<String> log;
 
-	private Graph graph;
+    private Graph graph;
 
-	// these are the commands for the input file specified in the problem
-	// description here:
-	// https://canvas.wisc.edu/courses/170796/pages/team-project-social-network
-	private static final char ADD_COMMAND = 'a';
-	private static final char REMOVE_COMMAND = 'r';
-	private static final char SET_COMMAND = 's';
+    // these are the commands for the input file specified in the problem
+    // description here:
+    // https://canvas.wisc.edu/courses/170796/pages/team-project-social-network
+    private static final char ADD_COMMAND = 'a';
+    private static final char REMOVE_COMMAND = 'r';
+    private static final char SET_COMMAND = 's';
 
-	public SocialNetwork() {
-		log = new ArrayList<String>();
-		graph = new Graph();
-	}
+    public SocialNetwork() {
+        log = new ArrayList<String>();
+        graph = new Graph();
+    }
 
-	/**
-	 * adds the specified user to the network
-	 * 
-	 * @author Chase Flackey
-	 * @param user the name of the user to be added to the network
-	 */
-	void addUser(String user) {
-		graph.addVertex(user);
-		log.add(ADD_COMMAND + " " + user);
-	}
+    /**
+     * adds the specified user to the network
+     * 
+     * @author Chase Flackey
+     * @param user the name of the user to be added to the network
+     */
+    void addUser(String user) {
+        graph.addVertex(user);
+        log.add(ADD_COMMAND + " " + user);
+    }
 
-	/**
-	 * removes the specified user from the network
-	 * 
-	 * @author Chase Flackey
-	 * @param user the name of the user to be removed from the network
-	 */
-	void removeUser(String user) {
-		graph.removeVertex(user);
-		log.add(REMOVE_COMMAND + " " + user);
-	}
+    /**
+     * removes the specified user from the network
+     * 
+     * @author Chase Flackey
+     * @param user the name of the user to be removed from the network
+     */
+    void removeUser(String user) {
+        graph.removeVertex(user);
+        log.add(REMOVE_COMMAND + " " + user);
+    }
 
-	/**
-	 * Makes user1 and user2 friends in the network
-	 * 
-	 * @author Chase Flackey
-	 * @param user1 the name of one user to become friends
-	 * @param user2 the name of the other user to become friends
-	 */
-	void addFriend(String user1, String user2) {
-		graph.addEdge(user1, user2);
-		log.add(ADD_COMMAND + " " + user1 + " " + user2);
-	}
+    /**
+     * Makes user1 and user2 friends in the network
+     * 
+     * @author Chase Flackey
+     * @param user1 the name of one user to become friends
+     * @param user2 the name of the other user to become friends
+     */
+    void addFriend(String user1, String user2) {
+        graph.addEdge(user1, user2);
+        log.add(ADD_COMMAND + " " + user1 + " " + user2);
+    }
 
-	/**
-	 * ends the friendship between these two users
-	 * 
-	 * @author Chase Flackey
-	 * @param user1 the name of one user in the network
-	 * @param user2 the name of another user in the network
-	 */
-	void removeFriend(String user1, String user2) {
-		graph.removeEdge(user1, user2);
-		log.add(REMOVE_COMMAND + " " + user1 + " " + user2);
-	}
+    /**
+     * ends the friendship between these two users
+     * 
+     * @author Chase Flackey
+     * @param user1 the name of one user in the network
+     * @param user2 the name of another user in the network
+     */
+    void removeFriend(String user1, String user2) {
+        graph.removeEdge(user1, user2);
+        log.add(REMOVE_COMMAND + " " + user1 + " " + user2);
+    }
 
-	/**
-	 * finds the number of connected groups in the network
-	 * 
-	 * @author Chase Flackey
-	 * @return returns the number of connected groups in the network
-	 */
-	public int getGroups() {
-		ArrayList<List<String>> conComponents = new ArrayList<List<String>>(graph.order());
-		
-		// First generates a list of connected vertices for each vertex in the
-		// network.
-		List<String> allUsers = graph.getAllVertices();
-		for(String user : allUsers) {
-			List<String> connected = new ArrayList<String>(graph.order());
-			connected = getFriends(user, connected);
-			// Each list is compared to a list of existing unique components. If the
-			// list does not match an existing connected component, this list is
-			// added to the unique components and the # of connected components is
-			// incremented.
-			Boolean duplicate = false;
-			for(int i = 0; i < conComponents.size(); i++) {
-				if(conComponents.get(i).containsAll(connected)) {
-					duplicate = true;
-				}
-			}
-			if(!duplicate) conComponents.add(connected);
-		}	
-		return conComponents.size();
-	}
-	
-	/**
-	 * Private recursive method to a list of all names in a connected group
-	 * 
-	 * Example: If john -> amy -> joe (john is friends with amy, amy is friends
-	 * with joe and john) then the returned list will contain john, amy, and joe.
-	 * @param user the current vertex in the network
-	 * @param connected a list of all previously visited users in the traversal
-	 */
-	public List<String> getFriends(String user, List<String> connected) {
-		
-		List<String> friends = allFriends(user);
-		if(friends.size() == 0) {
-			connected.add(user);
-		}
-		for(String friend : friends) {
-			if(!connected.contains(friend)) {
-				connected.add(friend);
-				getFriends(friend, connected);
-			}
-		}
-		return connected;
-	}
+    /**
+     * finds the number of connected groups in the network
+     * 
+     * @author Chase Flackey
+     * @return returns the number of connected groups in the network
+     */
+    public int getGroups() {
+        ArrayList<List<String>> conComponents = new ArrayList<List<String>>(graph.order());
 
-	/**
-	 * finds the list of mutual friends of user1 and user 2
-	 * 
-	 * @author Chase Flackey
-	 * 
-	 * @param user1 the name of a user in the graph
-	 * @param user2 the name of another user in the graph
-	 * @return returns a List of users who have user1 and user2 as friends
-	 */
-	public List<String> mutualFriends(String user1, String user2) {
-		
-		List<String> mutualFriends = new ArrayList<String>();
-		List<String> user1friends = graph.getAdjacentVerticesOf(user1);
-		List<String> user2friends = graph.getAdjacentVerticesOf(user2);
-		
-		for(String friend : user1friends) {
-			if (user2friends.contains(friend))
-				mutualFriends.add(friend);
-		}
-		return mutualFriends;
-	}
+        // First generates a list of connected vertices for each vertex in the
+        // network.
+        List<String> allUsers = graph.getAllVertices();
+        for (String user : allUsers) {
+            List<String> connected = new ArrayList<String>(graph.order());
+            connected = getFriends(user, connected);
+            // Each list is compared to a list of existing unique components. If the
+            // list does not match an existing connected component, this list is
+            // added to the unique components and the # of connected components is
+            // incremented.
+            Boolean duplicate = false;
+            for (int i = 0; i < conComponents.size(); i++) {
+                if (conComponents.get(i).containsAll(connected)) {
+                    duplicate = true;
+                }
+            }
+            if (!duplicate)
+                conComponents.add(connected);
+        }
+        return conComponents.size();
+    }
 
-	/**
-	 * finds the shortest path between user1 and user2, using an implemenation
-	 * of Dijkstra's algorithm
-	 * 
-	 * @author Chase Flackey
-	 * 
-	 * @param user1 the name of a user in the graph
-	 * @param user2 the name of another user in the graph
-	 * @return returns a List which is the shortest path from user1 to user2 in the
-	 *         network
-	 */
-	public List<String> friendLink(String user1, String user2) {
-		
-		//HashMap<String, String> 
-		
-		// TODO: Temporary implementation for GUI testing purposes
-		return graph.getAdjacentVerticesOf(user1);
-		
-	}
+    /**
+     * Private recursive method to a list of all names in a connected group
+     * 
+     * Example: If john -> amy -> joe (john is friends with amy, amy is friends
+     * with joe and john) then the returned list will contain john, amy, and joe.
+     * @param user the current vertex in the network
+     * @param connected a list of all previously visited users in the traversal
+     */
+    public List<String> getFriends(String user, List<String> connected) {
 
-	/**
-	 * finds all friends of the specified user
-	 * 
-	 * @author Chase Flackey
-	 * @param user the user whose friends will be found
-	 * @return returns a list of people who are friends with user
-	 */
-	public List<String> allFriends(String user) {
-		return graph.getAdjacentVerticesOf(user);
-	}
-	
-	public String getSelected() {
-		return selectedUser;
-	}
+        List<String> friends = allFriends(user);
+        if (friends.size() == 0) {
+            connected.add(user);
+        }
+        for (String friend : friends) {
+            if (!connected.contains(friend)) {
+                connected.add(friend);
+                getFriends(friend, connected);
+            }
+        }
+        return connected;
+    }
 
-	/**
-	 * makes the selected user the passed user if they're in the network
-	 * 
-	 * @author John Butler
-	 * @param user the user to be selected
-	 * @return returns true if the user was successfully selected, false otherwise
-	 */
-	public boolean select(String user) {
-		List<String> allUsers = graph.getAllVertices();
-		for (String currUser : allUsers) {
+    /**
+     * finds the list of mutual friends of user1 and user 2
+     * 
+     * @author Chase Flackey
+     * 
+     * @param user1 the name of a user in the graph
+     * @param user2 the name of another user in the graph
+     * @return returns a List of users who have user1 and user2 as friends
+     */
+    public List<String> mutualFriends(String user1, String user2) {
 
-			if (currUser.equals(user)) {
-				this.selectedUser = user;
+        List<String> mutualFriends = new ArrayList<String>();
+        List<String> user1friends = graph.getAdjacentVerticesOf(user1);
+        List<String> user2friends = graph.getAdjacentVerticesOf(user2);
 
-				// whoever is selected is supposed to be recorded in the log
-				String command = SET_COMMAND + " " + user;
-				log.add(command);
-				return true;
-			}
-		}
-		return false;
-	}
+        for (String friend : user1friends) {
+            if (user2friends.contains(friend))
+                mutualFriends.add(friend);
+        }
+        return mutualFriends;
+    }
 
-	/**
-	 * determines if the passed user was in the network before the last command
-	 * executed. This is a helper function to undo()
-	 * 
-	 * @author John Butler
-	 * @param user the user who may or may not have been added by the last command
-	 * @return returns true if the user existed before the previous command, false
-	 *         otherwise
-	 */
-	private boolean hasExisted(String user) {
-		for (int i = log.size() - 2; i >= 0; i--) {
-			String[] parameters = getParameters(log.get(i));
+    /**
+     * finds the shortest path between user1 and user2, using an implemenation
+     * of Dijkstra's algorithm
+     * 
+     * @author Chase Flackey
+     * 
+     * @param user1 the name of a user in the graph
+     * @param user2 the name of another user in the graph
+     * @return returns a List which is the shortest path from user1 to user2 in the
+     *         network
+     */
+    public List<String> friendLink(String user1, String user2) {
 
-			if (parameters[0].equals(user)) {
-				// if this character wasn't explicitly removed, the fact that he was referenced
-				// means that he was in the graph because we check for that
-				if (log.get(i).charAt(0) == REMOVE_COMMAND)
-					if (parameters.length == 1)
-						return false;
-				return true;
-			}
+        // HashMap<String, String>
 
-			if (parameters.length == 2 && parameters[1].equals(user))
-				return true;
-		}
-		return false;
-	}
+        // TODO: Temporary implementation for GUI testing purposes
+        return graph.getAdjacentVerticesOf(user1);
 
-	/**
-	 * This looks at the last action logged and performs the opposite action. This
-	 * undo is cyclic. i.e. if you add a connection and keep calling undo(), it will
-	 * keep adding and removing that connection.
-	 * 
-	 * @return returns an empty string performed successfully, returns an error message otherwise
-	 */
-	public String undo() {
-		if (log.size() == 0)
-			return "There was no action to undo";
+    }
 
-		String lastCommand = log.get(log.size() - 1);
-		String message = "";
+    /**
+     * finds all friends of the specified user
+     * 
+     * @author Chase Flackey
+     * @param user the user whose friends will be found
+     * @return returns a list of people who are friends with user
+     */
+    public List<String> allFriends(String user) {
+        return graph.getAdjacentVerticesOf(user);
+    }
 
-		switch (lastCommand.charAt(0)) {
-		case ADD_COMMAND:
+    public String getSelected() {
+        return selectedUser;
+    }
 
-			String[] parameters = getParameters(lastCommand);
-			// if the last command was to add an edge
-			if (parameters.length == 2) {
+    /**
+     * makes the selected user the passed user if they're in the network
+     * 
+     * @author John Butler
+     * @param user the user to be selected
+     * @return returns true if the user was successfully selected, false otherwise
+     */
+    public boolean select(String user) {
+        List<String> allUsers = graph.getAllVertices();
+        for (String currUser : allUsers) {
 
-				// check whether adding the edge created each person. If it was, I can remove
-				// the connection by removing the person
-				boolean zeroExisted = hasExisted(parameters[0]);
-				boolean oneExisted = hasExisted(parameters[1]);
+            if (currUser.equals(user)) {
+                this.selectedUser = user;
 
-				if (!zeroExisted)
-					message += processCommand(REMOVE_COMMAND + " " + parameters[0]);
+                // whoever is selected is supposed to be recorded in the log
+                String command = SET_COMMAND + " " + user;
+                log.add(command);
+                return true;
+            }
+        }
+        return false;
+    }
 
-				if (!oneExisted) {
-					if (!message.equals(""))
-						message += "; ";
-					message += processCommand(REMOVE_COMMAND + " " + parameters[1]);
-				}
+    /**
+     * determines if the passed user was in the network before the last command
+     * executed. This is a helper function to undo()
+     * 
+     * @author John Butler
+     * @param user the user who may or may not have been added by the last command
+     * @return returns true if the user existed before the previous command, false
+     *         otherwise
+     */
+    private boolean hasExisted(String user) {
+        for (int i = log.size() - 2; i >= 0; i--) {
+            String[] parameters = getParameters(log.get(i));
 
-				//if both of those in the connection did exist, then I only have to remove the connection
-				if (oneExisted && zeroExisted) {
-					String undoCommand = REMOVE_COMMAND + lastCommand.substring(1);
-					message = processCommand(undoCommand);
-				}
+            if (parameters[0].equals(user)) {
+                // if this character wasn't explicitly removed, the fact that he was referenced
+                // means that he was in the graph because we check for that
+                if (log.get(i).charAt(0) == REMOVE_COMMAND)
+                    if (parameters.length == 1)
+                        return false;
+                return true;
+            }
 
-				if (!message.equals(""))
-					message = "The previous command cannot be undone : " + lastCommand;
-			} else {
+            if (parameters.length == 2 && parameters[1].equals(user))
+                return true;
+        }
+        return false;
+    }
 
-				// the opposite of adding is removing
-				String undoCommand = REMOVE_COMMAND + lastCommand.substring(1);
-				message = processCommand(undoCommand);
+    /**
+     * This looks at the last action logged and performs the opposite action. This
+     * undo is cyclic. i.e. if you add a connection and keep calling undo(), it will
+     * keep adding and removing that connection.
+     * 
+     * @return returns an empty string performed successfully, returns an error message otherwise
+     */
+    public String undo() {
+        if (log.size() == 0)
+            return "There was no action to undo";
 
-				if (!message.equals(""))
-					message = "The previous command cannot be undone: " + lastCommand;
-			}
-			break;
-		case REMOVE_COMMAND:
-			// the opposite of removing is adding
-			lastCommand = ADD_COMMAND + lastCommand.substring(1);
-			message = processCommand(lastCommand);
+        String lastCommand = log.get(log.size() - 1);
+        String message = "";
 
-			if (message.equals(""))
-				message = "the previous command cannot be undone: " + lastCommand;
-			break;
-		case SET_COMMAND:
+        switch (lastCommand.charAt(0)) {
+            case ADD_COMMAND:
 
-			// I have to search for the last person who was selected
-			for (int i = log.size() - 2; i >= 0; i--) {
-				if (log.get(i).charAt(0) == SET_COMMAND) {
+                String[] parameters = getParameters(lastCommand);
+                // if the last command was to add an edge
+                if (parameters.length == 2) {
 
-					// once found, select that person
-					lastCommand = log.get(i);
-					message = processCommand(lastCommand);
+                    // check whether adding the edge created each person. If it was, I can remove
+                    // the connection by removing the person
+                    boolean zeroExisted = hasExisted(parameters[0]);
+                    boolean oneExisted = hasExisted(parameters[1]);
 
-					// I don't actually check if the previous command was valid in this case, but I
-					// don't think that there is any way for there to be an invalid command
-					if (message.equals(""))
-						log.add(lastCommand);
-					return message;
-				}
-			}
-			// if I never found another set command in the rest of the log
-			message = "There was no one previously selected.";
-			break;
-		default:
-			message = "invalid previous command: " + lastCommand;
-			break;
-		}
-		return message;
-	}
+                    if (!zeroExisted)
+                        message += processCommand(REMOVE_COMMAND + " " + parameters[0]);
 
-	/**
-	 * helper function to processCommand(String), it parses a command and finds the
-	 * parameters. This validates the input as well
-	 * 
-	 * @author John Butler
-	 * 
-	 * @param command the command to be parsed
-	 * @return an array of the parameters if the command is valid, null otherwise
-	 */
-	private String[] getParameters(String command) {
-		// makes sure there is a command to process
-		if (command.equals(""))
-			return null;
-		String[] tokens = command.split(" ");
+                    if (!oneExisted) {
+                        if (!message.equals(""))
+                            message += "; ";
+                        message += processCommand(REMOVE_COMMAND + " " + parameters[1]);
+                    }
 
-		// the command part must be one character only
-		if (tokens[0].length() != 1)
-			return null;
+                    // if both of those in the connection did exist, then I only have to remove the
+                    // connection
+                    if (oneExisted && zeroExisted) {
+                        String undoCommand = REMOVE_COMMAND + lastCommand.substring(1);
+                        message = processCommand(undoCommand);
+                    }
 
-		// these are the only valid commands
-		// I check for the correct number of parameters for the command as well:
-		// add and remove can have one or two parameters, while set can only have one
-		switch (tokens[0].charAt(0)) {
-		case ADD_COMMAND:
-		case REMOVE_COMMAND:
-			if (tokens.length == 3) // command + two parameters
-				return new String[] { tokens[1], tokens[2] };
-		case SET_COMMAND:
-			if (tokens.length == 2) // command + one parameter
-				return new String[] { tokens[1] };
-		default:
-			break;
-		}
+                    if (!message.equals(""))
+                        message = "The previous command cannot be undone : " + lastCommand;
+                } else {
 
-		// this line is only reached if there is an invalid number of parameters
-		return null;
-	}
+                    // the opposite of adding is removing
+                    String undoCommand = REMOVE_COMMAND + lastCommand.substring(1);
+                    message = processCommand(undoCommand);
 
-	private String processCommand(String command) {
-		return processCommand(command, this);
-	}
+                    if (!message.equals(""))
+                        message = "The previous command cannot be undone: " + lastCommand;
+                }
+                break;
+            case REMOVE_COMMAND:
+                // the opposite of removing is adding
+                lastCommand = ADD_COMMAND + lastCommand.substring(1);
+                message = processCommand(lastCommand);
 
-	/**
-	 * Performs the operation specified in command on network in case we only want
-	 * to use a temporary network.
-	 * 
-	 * @author John Butler
-	 * @param command the command to be processed
-	 * @param network the network to apply the command to
-	 * @return returns an error message if the command is invalid, otherwise returns
-	 *         an empty string
-	 */
-	private String processCommand(String command, SocialNetwork network) {
+                if (message.equals(""))
+                    message = "the previous command cannot be undone: " + lastCommand;
+                break;
+            case SET_COMMAND:
 
-		String[] parameters = getParameters(command);
+                // I have to search for the last person who was selected
+                for (int i = log.size() - 2; i >= 0; i--) {
+                    if (log.get(i).charAt(0) == SET_COMMAND) {
 
-		// if the data does not get processed correctly,
-		// getParameters(String) returns null
-		if (parameters == null)
-			return "unable to process parameters.";
+                        // once found, select that person
+                        lastCommand = log.get(i);
+                        message = processCommand(lastCommand);
 
-		// I already checked for the number of parameters in getParameters(String), so I
-		// don't have to worry about that here
-		switch (command.charAt(0)) {
-		case ADD_COMMAND:
-			// the specific action taken is dependent on how many parameters there are
-			if (parameters.length == 1)
-				network.addUser(parameters[0]);
-			else
-				network.addFriend(parameters[0], parameters[1]);
-			break;
-		case REMOVE_COMMAND:
-			// the specific action taken is dependent on how many parameters there are
-			if (parameters.length == 1)
-				network.removeUser(parameters[0]);
-			else
-				network.removeFriend(parameters[0], parameters[1]);
+                        // I don't actually check if the previous command was valid in this case,
+                        // but I
+                        // don't think that there is any way for there to be an invalid command
+                        if (message.equals(""))
+                            log.add(lastCommand);
+                        return message;
+                    }
+                }
+                // if I never found another set command in the rest of the log
+                message = "There was no one previously selected.";
+                break;
+            default:
+                message = "invalid previous command: " + lastCommand;
+                break;
+        }
+        return message;
+    }
 
-			break;
-		case SET_COMMAND:
-			network.select(parameters[0]);
-			break;
-		default:
-			// getParameters(String) already validates the command input, but just in case
-			return command.charAt(0) + "' is an invalid comand";
-		}
-		return "";
-	}
+    /**
+     * helper function to processCommand(String), it parses a command and finds the
+     * parameters. This validates the input as well
+     * 
+     * @author John Butler
+     * 
+     * @param command the command to be parsed
+     * @return an array of the parameters if the command is valid, null otherwise
+     */
+    private String[] getParameters(String command) {
+        // makes sure there is a command to process
+        if (command.equals(""))
+            return null;
+        String[] tokens = command.split(" ");
 
-	/**
-	 * replaces the current social network with what's found in the file. If the
-	 * file is invalid, the social network is not overwritten. What is considered
-	 * valid is specified here:
-	 * https://canvas.wisc.edu/courses/170796/pages/team-project-social-network
-	 * 
-	 * @author John Butler
-	 * @param file the path to a file containing the commands in plain text
-	 * @return returns an error message if the data in the file is invalid, an empty
-	 *         string otherwise
-	 */
-	public String readFromFile(String filename) {
-		// TODO I'm waiting to test this until SocialNetwork is done
-		try {
-			Scanner input = new Scanner(new File(filename));
-			// I use these temporary variables so that I don't overwrite the real variables
-			// if something goes wrong
-			SocialNetwork tempNetwork = new SocialNetwork();
-			ArrayList<String> tempLog = new ArrayList<String>();
+        // the command part must be one character only
+        if (tokens[0].length() != 1)
+            return null;
 
-			int currentLine = 1;
-			while (input.hasNext()) {
-				String command = input.nextLine();
-				String invalidCommandMessage = "invalid command at line " + currentLine++ + " in inputted file: \""
-						+ command + '"';
-				tempLog.add(command);
-				String message = processCommand(command, tempNetwork);
-				if (!message.equals("")) {
-					input.close();
-					return invalidCommandMessage + ", " + message;
-				}
-			}
+        // these are the only valid commands
+        // I check for the correct number of parameters for the command as well:
+        // add and remove can have one or two parameters, while set can only have one
+        switch (tokens[0].charAt(0)) {
+            case ADD_COMMAND:
+            case REMOVE_COMMAND:
+                if (tokens.length == 3) // command + two parameters
+                    return new String[] {tokens[1], tokens[2]};
+            case SET_COMMAND:
+                if (tokens.length == 2) // command + one parameter
+                    return new String[] {tokens[1]};
+            default:
+                break;
+        }
 
-			// after we confirm that there were no errors, we can safely process the
-			// commands on this instance
-			log = tempLog;
-			for (String command : log)
-				processCommand(command);
+        // this line is only reached if there is an invalid number of parameters
+        return null;
+    }
 
-			input.close();
-		} catch (FileNotFoundException e) {
-			return "File \"" + filename + "\" not found.";
-		}
-		return "";
-	}
+    private String processCommand(String command) {
+        return processCommand(command, this);
+    }
 
-	/**
-	 * saves the log to the specified file name
-	 * 
-	 * @author John Butler
-	 * @param filename the file name to save the log as
-	 * @return returns true if the save was successful, false otherwise
-	 */
-	private boolean saveLog(String filename) {
-		// TODO I'm waiting to test this until SocialNetwork is done
+    /**
+     * Performs the operation specified in command on network in case we only want
+     * to use a temporary network.
+     * 
+     * @author John Butler
+     * @param command the command to be processed
+     * @param network the network to apply the command to
+     * @return returns an error message if the command is invalid, otherwise returns
+     *         an empty string
+     */
+    private String processCommand(String command, SocialNetwork network) {
 
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter(filename);
-			for (String command : log)
-				writer.println(command);
+        String[] parameters = getParameters(command);
 
-			writer.close();
-		} catch (FileNotFoundException e) {
-			return false;
-		}
-		return true;
-	}
+        // if the data does not get processed correctly,
+        // getParameters(String) returns null
+        if (parameters == null)
+            return "unable to process parameters.";
+
+        // I already checked for the number of parameters in getParameters(String), so I
+        // don't have to worry about that here
+        switch (command.charAt(0)) {
+            case ADD_COMMAND:
+                // the specific action taken is dependent on how many parameters there are
+                if (parameters.length == 1)
+                    network.addUser(parameters[0]);
+                else
+                    network.addFriend(parameters[0], parameters[1]);
+                break;
+            case REMOVE_COMMAND:
+                // the specific action taken is dependent on how many parameters there are
+                if (parameters.length == 1)
+                    network.removeUser(parameters[0]);
+                else
+                    network.removeFriend(parameters[0], parameters[1]);
+
+                break;
+            case SET_COMMAND:
+                network.select(parameters[0]);
+                break;
+            default:
+                // getParameters(String) already validates the command input, but just in case
+                return command.charAt(0) + "' is an invalid comand";
+        }
+        return "";
+    }
+
+    /**
+     * replaces the current social network with what's found in the file. If the
+     * file is invalid, the social network is not overwritten. What is considered
+     * valid is specified here:
+     * https://canvas.wisc.edu/courses/170796/pages/team-project-social-network
+     * 
+     * @author John Butler
+     * @param file the path to a file containing the commands in plain text
+     * @return returns an error message if the data in the file is invalid, an empty
+     *         string otherwise
+     */
+    public String readFromFile(String filename) {
+        // TODO I'm waiting to test this until SocialNetwork is done
+        try {
+            Scanner input = new Scanner(new File(filename));
+            // I use these temporary variables so that I don't overwrite the real variables
+            // if something goes wrong
+            SocialNetwork tempNetwork = new SocialNetwork();
+            ArrayList<String> tempLog = new ArrayList<String>();
+
+            int currentLine = 1;
+            while (input.hasNext()) {
+                String command = input.nextLine();
+                String invalidCommandMessage = "invalid command at line " + currentLine++
+                    + " in inputted file: \"" + command + '"';
+                tempLog.add(command);
+                String message = processCommand(command, tempNetwork);
+                if (!message.equals("")) {
+                    input.close();
+                    return invalidCommandMessage + ", " + message;
+                }
+            }
+
+            // after we confirm that there were no errors, we can safely process the
+            // commands on this instance
+            log = tempLog;
+            for (String command : log)
+                processCommand(command);
+
+            input.close();
+        } catch (FileNotFoundException e) {
+            return "File \"" + filename + "\" not found.";
+        }
+        return "";
+    }
+
+    /**
+     * saves the log to the specified file name
+     * 
+     * @author John Butler
+     * @param filename the file name to save the log as
+     * @return returns true if the save was successful, false otherwise
+     */
+    public boolean saveLog(String filename) {
+        // TODO I'm waiting to test this until SocialNetwork is done
+
+        PrintWriter writer;
+
+        boolean saved = false;
+
+        try {
+            writer = new PrintWriter(filename);
+            for (String command : log)
+                writer.println(command);
+
+
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+
+        return true;
+    }
+
 }
