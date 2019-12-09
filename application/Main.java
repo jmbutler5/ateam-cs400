@@ -1,27 +1,18 @@
 package application;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -56,7 +47,8 @@ public class Main extends Application {
 	Scene startScene, mainScene, exitScene;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage primaryStage) throws Exception {	
+		
 		// Welcome Scene
 		welcome();
 		// add confirm button (move from start scene to main scene)
@@ -81,11 +73,24 @@ public class Main extends Application {
 		mainPane.setCenter(rootGrid);
 
 		// add exit button
-		VBox done = new VBox();
+		VBox bottom = new VBox();
 		Button toExit = new Button("Done");
 		toExit.setOnAction(e -> primaryStage.setScene(exitScene)); // on click - goes to exitScene
-		done.getChildren().add(toExit);
-		mainPane.setBottom(done);
+		bottom.getChildren().add(toExit);
+		
+		// add undo button
+		Button undo = new Button("Undo");
+		undo.setOnAction(e -> {
+			String message = socialNetwork.undo();
+			if(!message.equals("")) {
+				//TODO display error
+			} else {
+				//TODO reset display
+			}
+		});
+		bottom.getChildren().add(undo);
+		
+		mainPane.setBottom(bottom);
 
 		mainScene = new Scene(mainPane, WINDOW_WIDTH, WINDOW_HEIGHT);
 
