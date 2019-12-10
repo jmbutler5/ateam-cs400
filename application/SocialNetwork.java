@@ -11,7 +11,7 @@ import javafx.scene.control.Alert;
 public class SocialNetwork {
 
     // the user being displayed
-    private String selectedUser;
+    private String centerUser;
 
     // keeps track of the log so we can print it to a file
     // we have to actually keep track of operations (i.e. undo), so we can't just
@@ -85,13 +85,13 @@ public class SocialNetwork {
      * @return returns the number of connected groups in the network
      */
     public int getGroups() {
-        ArrayList<List<String>> conComponents = new ArrayList<List<String>>(graph.order());
+        ArrayList<ArrayList<String>> conComponents = new ArrayList<ArrayList<String>>(graph.order());
 
         // First generates a list of connected vertices for each vertex in the
         // network.
-        List<String> allUsers = graph.getAllVertices();
+        ArrayList<String> allUsers = graph.getAllVertices();
         for (String user : allUsers) {
-            List<String> connected = new ArrayList<String>(graph.order());
+            ArrayList<String> connected = new ArrayList<String>(graph.order());
             connected = getFriends(user, connected);
             // Each list is compared to a list of existing unique components. If the
             // list does not match an existing connected component, this list is
@@ -117,9 +117,9 @@ public class SocialNetwork {
      * @param user the current vertex in the network
      * @param connected a list of all previously visited users in the traversal
      */
-    public List<String> getFriends(String user, List<String> connected) {
+    public ArrayList<String> getFriends(String user, ArrayList<String> connected) {
 
-        List<String> friends = allFriends(user);
+        ArrayList<String> friends = allFriends(user);
         if (friends.size() == 0) {
             connected.add(user);
         }
@@ -141,11 +141,11 @@ public class SocialNetwork {
      * @param user2 the name of another user in the graph
      * @return returns a List of users who have user1 and user2 as friends
      */
-    public List<String> mutualFriends(String user1, String user2) {
+    public ArrayList<String> mutualFriends(String user1, String user2) {
 
-        List<String> mutualFriends = new ArrayList<String>();
-        List<String> user1friends = graph.getAdjacentVerticesOf(user1);
-        List<String> user2friends = graph.getAdjacentVerticesOf(user2);
+        ArrayList<String> mutualFriends = new ArrayList<String>();
+        ArrayList<String> user1friends = graph.getAdjacentVerticesOf(user1);
+        ArrayList<String> user2friends = graph.getAdjacentVerticesOf(user2);
 
         for (String friend : user1friends) {
             if (user2friends.contains(friend))
@@ -165,7 +165,7 @@ public class SocialNetwork {
      * @return returns a List which is the shortest path from user1 to user2 in the
      *         network
      */
-    public List<String> friendLink(String user1, String user2) {
+    public ArrayList<String> friendLink(String user1, String user2) {
 
         // HashMap<String, String>
 
@@ -181,12 +181,9 @@ public class SocialNetwork {
      * @param user the user whose friends will be found
      * @return returns a list of people who are friends with user
      */
-    public List<String> allFriends(String user) {
+    public ArrayList<String> allFriends(String user) {
         return graph.getAdjacentVerticesOf(user);
-    }
-
-    public String getSelected() {
-        return selectedUser;
+       
     }
 
     /**
@@ -201,7 +198,7 @@ public class SocialNetwork {
         for (String currUser : allUsers) {
 
             if (currUser.equals(user)) {
-                this.selectedUser = user;
+                this.centerUser = user;
 
                 // whoever is selected is supposed to be recorded in the log
                 String command = SET_COMMAND + " " + user;
@@ -431,7 +428,6 @@ public class SocialNetwork {
      *         string otherwise
      */
     public String readFromFile(String filename) {
-        // TODO I'm waiting to test this until SocialNetwork is done
         try {
             Scanner input = new Scanner(new File(filename));
             // I use these temporary variables so that I don't overwrite the real variables
@@ -454,8 +450,7 @@ public class SocialNetwork {
 
             // after we confirm that there were no errors, we can safely process the
             // commands on this instance
-            log = tempLog;
-            for (String command : log)
+            for (String command : tempLog)
                 processCommand(command);
 
             input.close();
@@ -494,4 +489,11 @@ public class SocialNetwork {
         return true;
     }
 
+    /**
+     * Getter method for the currentUser
+     */
+    public String getCenterUser() {
+        return centerUser;
+    }
+    
 }
