@@ -32,6 +32,23 @@ public class SocialNetwork {
 	}
 
 	/**
+	 * creates a new SocialNetwork instance with the same data as the passed
+	 * SocialNetwork. This is used when a file is read
+	 * 
+	 * @param toClone
+	 */
+	public SocialNetwork(SocialNetwork toClone) {
+		selectedUser = toClone.selectedUser;
+
+		log = new ArrayList<String>();
+		for (int i = 0; i < toClone.log.size(); i++)
+			log.add(toClone.log.get(i));
+
+		graph = new Graph(toClone.graph);
+
+	}
+
+	/**
 	 * adds the specified user to the network
 	 * 
 	 * @author Chase Flackey
@@ -85,11 +102,11 @@ public class SocialNetwork {
 	 */
 	public int getGroups() {
 		ArrayList<List<String>> conComponents = new ArrayList<List<String>>(graph.order());
-		
+
 		// First generates a list of connected vertices for each vertex in the
 		// network.
 		List<String> allUsers = graph.getAllVertices();
-		for(String user : allUsers) {
+		for (String user : allUsers) {
 			List<String> connected = new ArrayList<String>(graph.order());
 			connected = getFriends(user, connected);
 			// Each list is compared to a list of existing unique components. If the
@@ -97,32 +114,34 @@ public class SocialNetwork {
 			// added to the unique components and the # of connected components is
 			// incremented.
 			Boolean duplicate = false;
-			for(int i = 0; i < conComponents.size(); i++) {
-				if(conComponents.get(i).containsAll(connected)) {
+			for (int i = 0; i < conComponents.size(); i++) {
+				if (conComponents.get(i).containsAll(connected)) {
 					duplicate = true;
 				}
 			}
-			if(!duplicate) conComponents.add(connected);
-		}	
+			if (!duplicate)
+				conComponents.add(connected);
+		}
 		return conComponents.size();
 	}
-	
+
 	/**
 	 * Private recursive method to a list of all names in a connected group
 	 * 
-	 * Example: If john -> amy -> joe (john is friends with amy, amy is friends
-	 * with joe and john) then the returned list will contain john, amy, and joe.
-	 * @param user the current vertex in the network
+	 * Example: If john -> amy -> joe (john is friends with amy, amy is friends with
+	 * joe and john) then the returned list will contain john, amy, and joe.
+	 * 
+	 * @param user      the current vertex in the network
 	 * @param connected a list of all previously visited users in the traversal
 	 */
 	public List<String> getFriends(String user, List<String> connected) {
-		
+
 		List<String> friends = allFriends(user);
-		if(friends.size() == 0) {
+		if (friends.size() == 0) {
 			connected.add(user);
 		}
-		for(String friend : friends) {
-			if(!connected.contains(friend)) {
+		for (String friend : friends) {
+			if (!connected.contains(friend)) {
 				connected.add(friend);
 				getFriends(friend, connected);
 			}
@@ -140,12 +159,12 @@ public class SocialNetwork {
 	 * @return returns a List of users who have user1 and user2 as friends
 	 */
 	public List<String> mutualFriends(String user1, String user2) {
-		
+
 		List<String> mutualFriends = new ArrayList<String>();
 		List<String> user1friends = graph.getAdjacentVerticesOf(user1);
 		List<String> user2friends = graph.getAdjacentVerticesOf(user2);
-		
-		for(String friend : user1friends) {
+
+		for (String friend : user1friends) {
 			if (user2friends.contains(friend))
 				mutualFriends.add(friend);
 		}
@@ -153,8 +172,8 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * finds the shortest path between user1 and user2, using an implemenation
-	 * of Dijkstra's algorithm
+	 * finds the shortest path between user1 and user2, using an implemenation of
+	 * Dijkstra's algorithm
 	 * 
 	 * @author Chase Flackey
 	 * 
@@ -164,12 +183,12 @@ public class SocialNetwork {
 	 *         network
 	 */
 	public List<String> friendLink(String user1, String user2) {
-		
-		//HashMap<String, String> 
-		
+
+		// HashMap<String, String>
+
 		// TODO: Temporary implementation for GUI testing purposes
 		return graph.getAdjacentVerticesOf(user1);
-		
+
 	}
 
 	/**
@@ -182,7 +201,7 @@ public class SocialNetwork {
 	public List<String> allFriends(String user) {
 		return graph.getAdjacentVerticesOf(user);
 	}
-	
+
 	public String getSelected() {
 		return selectedUser;
 	}
@@ -243,7 +262,8 @@ public class SocialNetwork {
 	 * undo is cyclic. i.e. if you add a connection and keep calling undo(), it will
 	 * keep adding and removing that connection.
 	 * 
-	 * @return returns an empty string performed successfully, returns an error message otherwise
+	 * @return returns an empty string performed successfully, returns an error
+	 *         message otherwise
 	 */
 	public String undo() {
 		if (log.size() == 0)
@@ -273,7 +293,8 @@ public class SocialNetwork {
 					message += processCommand(REMOVE_COMMAND + " " + parameters[1]);
 				}
 
-				//if both of those in the connection did exist, then I only have to remove the connection
+				// if both of those in the connection did exist, then I only have to remove the
+				// connection
 				if (oneExisted && zeroExisted) {
 					String undoCommand = REMOVE_COMMAND + lastCommand.substring(1);
 					message = processCommand(undoCommand);
@@ -364,52 +385,43 @@ public class SocialNetwork {
 		return null;
 	}
 
-	private String processCommand(String command) {
-		return processCommand(command, this);
-	}
-
 	/**
 	 * Performs the operation specified in command on network in case we only want
 	 * to use a temporary network.
 	 * 
 	 * @author John Butler
 	 * @param command the command to be processed
-	 * @param network the network to apply the command to
 	 * @return returns an error message if the command is invalid, otherwise returns
 	 *         an empty string
 	 */
-	private String processCommand(String command, SocialNetwork network) {
+	private String processCommand(String command) {
 
 		String[] parameters = getParameters(command);
-
-		// if the data does not get processed correctly,
-		// getParameters(String) returns null
 		if (parameters == null)
 			return "unable to process parameters.";
 
-		// I already checked for the number of parameters in getParameters(String), so I
-		// don't have to worry about that here
 		switch (command.charAt(0)) {
 		case ADD_COMMAND:
 			// the specific action taken is dependent on how many parameters there are
 			if (parameters.length == 1)
-				network.addUser(parameters[0]);
+				addUser(parameters[0]);
 			else
-				network.addFriend(parameters[0], parameters[1]);
+				addFriend(parameters[0], parameters[1]);
 			break;
+
 		case REMOVE_COMMAND:
 			// the specific action taken is dependent on how many parameters there are
 			if (parameters.length == 1)
-				network.removeUser(parameters[0]);
+				removeUser(parameters[0]);
 			else
-				network.removeFriend(parameters[0], parameters[1]);
+				removeFriend(parameters[0], parameters[1]);
+			break;
 
-			break;
 		case SET_COMMAND:
-			network.select(parameters[0]);
+			select(parameters[0]);
 			break;
+
 		default:
-			// getParameters(String) already validates the command input, but just in case
 			return command.charAt(0) + "' is an invalid comand";
 		}
 		return "";
@@ -417,8 +429,8 @@ public class SocialNetwork {
 
 	/**
 	 * replaces the current social network with what's found in the file. If the
-	 * file is invalid, the social network is not overwritten. What is considered
-	 * valid is specified here:
+	 * file is invalid, the social network is not affected. What is considered valid
+	 * is specified here:
 	 * https://canvas.wisc.edu/courses/170796/pages/team-project-social-network
 	 * 
 	 * @author John Butler
@@ -427,32 +439,43 @@ public class SocialNetwork {
 	 *         string otherwise
 	 */
 	private String readFromFile(String filename) {
-		// TODO I'm waiting to test this until SocialNetwork is done
 		try {
 			Scanner input = new Scanner(new File(filename));
-			// I use these temporary variables so that I don't overwrite the real variables
-			// if something goes wrong
-			SocialNetwork tempNetwork = new SocialNetwork();
-			ArrayList<String> tempLog = new ArrayList<String>();
 
-			int currentLine = 1;
+			// I use a temporary variable so that I don't affect the real instance
+			// if something goes wrong
+			SocialNetwork tempNetwork = new SocialNetwork(this);
+
+			// test that all of the commands don't cause errors
+			int lineReading = 1;
 			while (input.hasNext()) {
+
 				String command = input.nextLine();
-				String invalidCommandMessage = "invalid command at line " + currentLine++ + " in inputted file: \""
+				String invalidCommandMessage = "invalid command at line " + lineReading++ + " in inputted file: \""
 						+ command + '"';
-				tempLog.add(command);
-				String message = processCommand(command, tempNetwork);
+
+				String message = tempNetwork.processCommand(command);
+
+				// if there was an error message, return immediately
 				if (!message.equals("")) {
 					input.close();
 					return invalidCommandMessage + ", " + message;
 				}
 			}
 
-			// after we confirm that there were no errors, we can safely process the
-			// commands on this instance
-			log = tempLog;
-			for (String command : log)
-				processCommand(command);
+			// after we confirm that there were no errors, we can safely copy over the
+			// temporary instances
+			this.graph = tempNetwork.graph;
+			this.log = tempNetwork.log;
+			this.selectedUser = tempNetwork.selectedUser;
+
+			
+			//makes sure there was a selected user
+			if (selectedUser == null) {
+				List<String> people = graph.getAllVertices();
+				if (!people.isEmpty())
+					selectedUser = people.get(0);
+			}
 
 			input.close();
 		} catch (FileNotFoundException e) {
@@ -469,11 +492,8 @@ public class SocialNetwork {
 	 * @return returns true if the save was successful, false otherwise
 	 */
 	private boolean saveLog(String filename) {
-		// TODO I'm waiting to test this until SocialNetwork is done
-
-		PrintWriter writer;
 		try {
-			writer = new PrintWriter(filename);
+			PrintWriter writer = new PrintWriter(filename);
 			for (String command : log)
 				writer.println(command);
 

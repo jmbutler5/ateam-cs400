@@ -47,8 +47,8 @@ public class Main extends Application {
 	Scene startScene, mainScene, exitScene;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {	
-		
+	public void start(Stage primaryStage) throws Exception {
+
 		// Welcome Scene
 		welcome();
 		// add confirm button (move from start scene to main scene)
@@ -73,23 +73,24 @@ public class Main extends Application {
 		mainPane.setCenter(rootGrid);
 
 		// add exit button
-		VBox bottom = new VBox();
+		HBox bottom = new HBox();
 		Button toExit = new Button("Done");
 		toExit.setOnAction(e -> primaryStage.setScene(exitScene)); // on click - goes to exitScene
 		bottom.getChildren().add(toExit);
-		
+
 		// add undo button
 		Button undo = new Button("Undo");
 		undo.setOnAction(e -> {
 			String message = socialNetwork.undo();
-			if(!message.equals("")) {
-				//TODO display error
+			if (!message.equals("")) {
+				// TODO display error
 			} else {
-				//TODO reset display
+				// TODO reset display
 			}
 		});
 		bottom.getChildren().add(undo);
-		
+		bottom.setSpacing(10.0);
+
 		mainPane.setBottom(bottom);
 
 		mainScene = new Scene(mainPane, WINDOW_WIDTH, WINDOW_HEIGHT);
