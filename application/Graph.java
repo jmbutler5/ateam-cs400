@@ -174,7 +174,9 @@ public class Graph implements GraphADT {
 	 */
 	public List<String> getAllVertices() {
 		List<String> verticeSet = new ArrayList<String>();
+		
 		vertices.forEach((n) -> verticeSet.add(n));
+		
 		return verticeSet;
 	}
 
@@ -182,16 +184,23 @@ public class Graph implements GraphADT {
 	 * Get all the neighbor (adjacent) vertices of a vertex
 	 *
 	 */
-	public List<String> getAdjacentVerticesOf(String vertex) {
-		List<String> adjVertices = new ArrayList<String>();
+	public ArrayList<String> getAdjacentVerticesOf(String vertex) {
+	    
+		ArrayList<String> adjVertices = new ArrayList<String>();
 		// Finds column of vertex, then searches matrix for any edges
-		int v = vertices.indexOf(vertex);
-		for (int i = 0; i < adjacencyMatrix[v].length; i++) {
-			if (adjacencyMatrix[v][i] == true)
-				// If edge exists, add vertex from corresponding location in
-				// vertices array list
+		int v = vertices.indexOf(vertex); 
+		// return null if user is not found
+		if (v == -1) 
+		    return null;
+		
+
+		// If edge exists, add vertex from corresponding location in 
+		// vertices array list
+		for(int i = 0; i < adjacencyMatrix[v].length; i++) 
+			if(adjacencyMatrix[v][i] == true)
 				adjVertices.add(vertices.get(i));
-		}
+		
+		
 		return adjVertices;
 	}
 

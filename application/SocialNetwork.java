@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class SocialNetwork {
 
 	// the user being displayed
-	private String selectedUser;
+	private String centerUser;
 
 	// keeps track of the log so we can print it to a file
 	// we have to actually keep track of operations (i.e. undo), so we can't just
@@ -38,7 +38,7 @@ public class SocialNetwork {
 	 * @param toClone
 	 */
 	public SocialNetwork(SocialNetwork toClone) {
-		selectedUser = toClone.selectedUser;
+		centerUser = toClone.centerUser;
 
 		log = new ArrayList<String>();
 		for (int i = 0; i < toClone.log.size(); i++)
@@ -202,8 +202,8 @@ public class SocialNetwork {
 		return graph.getAdjacentVerticesOf(user);
 	}
 
-	public String getSelected() {
-		return selectedUser;
+	public String getCenterUser() {
+		return centerUser;
 	}
 
 	/**
@@ -218,7 +218,7 @@ public class SocialNetwork {
 		for (String currUser : allUsers) {
 
 			if (currUser.equals(user)) {
-				this.selectedUser = user;
+				this.centerUser = user;
 
 				// whoever is selected is supposed to be recorded in the log
 				String command = SET_COMMAND + " " + user;
@@ -395,7 +395,7 @@ public class SocialNetwork {
 	 *         an empty string
 	 */
 	private String processCommand(String command) {
-
+		
 		String[] parameters = getParameters(command);
 		if (parameters == null)
 			return "unable to process parameters.";
@@ -438,7 +438,7 @@ public class SocialNetwork {
 	 * @return returns an error message if the data in the file is invalid, an empty
 	 *         string otherwise
 	 */
-	private String readFromFile(String filename) {
+	public String readFromFile(String filename) {
 		try {
 			Scanner input = new Scanner(new File(filename));
 
@@ -467,14 +467,14 @@ public class SocialNetwork {
 			// temporary instances
 			this.graph = tempNetwork.graph;
 			this.log = tempNetwork.log;
-			this.selectedUser = tempNetwork.selectedUser;
+			this.centerUser = tempNetwork.centerUser;
 
 			
-			//makes sure there was a selected user
-			if (selectedUser == null) {
+			//makes sure there was a selected user, even if there wasn't one specified
+			if (centerUser == null) {
 				List<String> people = graph.getAllVertices();
 				if (!people.isEmpty())
-					selectedUser = people.get(0);
+					centerUser = people.get(0);
 			}
 
 			input.close();
@@ -491,13 +491,15 @@ public class SocialNetwork {
 	 * @param filename the file name to save the log as
 	 * @return returns true if the save was successful, false otherwise
 	 */
-	private boolean saveLog(String filename) {
+	public boolean saveLog(String filename) {
 		try {
 			PrintWriter writer = new PrintWriter(filename);
+			
 			for (String command : log)
 				writer.println(command);
 
 			writer.close();
+			
 		} catch (FileNotFoundException e) {
 			return false;
 		}
