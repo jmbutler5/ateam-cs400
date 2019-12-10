@@ -481,7 +481,7 @@ public class SocialNetwork {
 		} catch (FileNotFoundException e) {
 			return "File \"" + filename + "\" not found.";
 		}
-		return "";
+		return "File found and loaded.";
 	}
 
 	/**

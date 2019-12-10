@@ -25,7 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    
+
     // store any command-line arguments that were entered.
     // NOTE: this.getParameters().getRaw() will get these also
     private List<String> args;
@@ -308,7 +308,13 @@ public class Main extends Application {
         TextField fileName = new TextField();
         Label label = new Label("Enter file name to read from: ");
 
-        open.setOnAction(e -> socialNetwork.readFromFile(fileName.getText()));
+        open.setOnAction(e -> {
+            String result = socialNetwork.readFromFile(fileName.getText());
+            Alert savedAlert = new Alert(Alert.AlertType.CONFIRMATION, result);
+            savedAlert.showAndWait();
+        });
+
+
 
         fileNameBox.getChildren().addAll(label, fileName, open);
 
@@ -364,11 +370,18 @@ public class Main extends Application {
         boolean fileSaved = false;
         fileSaved = socialNetwork.saveLog(inputText);
 
+        // if file saves, send error message
         if (!fileSaved) {
             Alert savedAlert = new Alert(Alert.AlertType.ERROR,
                 "Save unsuccessful. Please enter a valid filename.");
             savedAlert.showAndWait();
         }
+    }
+
+
+    private void showFileReadAlert() {
+
+
 
     }
 
@@ -387,7 +400,8 @@ public class Main extends Application {
         // list of mutual friends, to be added to friendLabels
         try {
             // get mutual friends
-            friendList = (ArrayList<String>) socialNetwork.mutualFriends(searchUser, socialNetwork.getCenterUser());
+            friendList = (ArrayList<String>) socialNetwork.mutualFriends(searchUser,
+                socialNetwork.getCenterUser());
             // update the "Showing" label
             showingLabel.setText("Showing: Mutual Friends of " + socialNetwork.getCenterUser()
                 + " and " + searchUser);
@@ -412,7 +426,8 @@ public class Main extends Application {
         String searchUser = search.getText();
         // get list of users in shortest path -- this is null if user is not found
         try {
-            friendList = (ArrayList<String>) socialNetwork.friendLink(searchUser, socialNetwork.getCenterUser());
+            friendList = (ArrayList<String>) socialNetwork.friendLink(searchUser,
+                socialNetwork.getCenterUser());
             showingLabel.setText("Showing: Shortest path from " + socialNetwork.getCenterUser()
                 + " to " + searchUser);
         } catch (NullPointerException e) {
@@ -502,8 +517,8 @@ public class Main extends Application {
                 if (i < displayList.size() && displayList.get(i) != null) {
 
                     String friend = displayList.get(i);
-                    
-                    /*TODO*/ System.out.println("adding friend " + friend);
+
+                    /* TODO */ System.out.println("adding friend " + friend);
 
                     // display the name of the user
                     friendLabelList.get(i).setText(friend);
@@ -511,9 +526,8 @@ public class Main extends Application {
                     friendLabelList.get(i).setOnMouseClicked(e -> {
                         searchedUser = friend;
                         centerUserHelper(friend);
-                        
-                    }
-                    );
+
+                    });
                 } else {
                     // if there is no element in the position of the list, set label to empty
                     friendLabelList.get(i).setText("");
