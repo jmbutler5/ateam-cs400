@@ -502,11 +502,18 @@ public class Main extends Application {
                 if (i < displayList.size() && displayList.get(i) != null) {
 
                     String friend = displayList.get(i);
+                    
+                    /*TODO*/ System.out.println("adding friend " + friend);
 
                     // display the name of the user
                     friendLabelList.get(i).setText(friend);
                     // on click, make the user center user
-                    friendLabelList.get(i).setOnMouseClicked(e -> centerUserHelper(friend));
+                    friendLabelList.get(i).setOnMouseClicked(e -> {
+                        searchedUser = friend;
+                        centerUserHelper(friend);
+                        
+                    }
+                    );
                 } else {
                     // if there is no element in the position of the list, set label to empty
                     friendLabelList.get(i).setText("");
