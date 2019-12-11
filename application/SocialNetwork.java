@@ -438,7 +438,7 @@ public class SocialNetwork {
 	 * @return returns an error message if the data in the file is invalid, an empty
 	 *         string otherwise
 	 */
-	public String readFromFile(String filename) {
+	public boolean readFromFile(String filename) {
 		try {
 			Scanner input = new Scanner(new File(filename));
 
@@ -459,7 +459,7 @@ public class SocialNetwork {
 				// if there was an error message, return immediately
 				if (!message.equals("")) {
 					input.close();
-					return invalidCommandMessage + ", " + message;
+					return false;
 				}
 			}
 
@@ -479,9 +479,9 @@ public class SocialNetwork {
 
 			input.close();
 		} catch (FileNotFoundException e) {
-			return "File \"" + filename + "\" not found.";
+			return false;
 		}
-		return "File found and loaded.";
+		return true;
 	}
 
 	/**

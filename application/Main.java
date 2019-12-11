@@ -309,9 +309,14 @@ public class Main extends Application {
         Label label = new Label("Enter file name to read from: ");
 
         open.setOnAction(e -> {
-            String result = socialNetwork.readFromFile(fileName.getText());
-            Alert savedAlert = new Alert(Alert.AlertType.CONFIRMATION, result);
-            savedAlert.showAndWait();
+            // if file read successfully, display confirmation, else display error
+            if (socialNetwork.readFromFile(fileName.getText())) {
+                Alert savedAlert = new Alert(Alert.AlertType.CONFIRMATION, "File read and loaded.");
+                savedAlert.showAndWait();
+            } else {
+                Alert savedAlert = new Alert(Alert.AlertType.ERROR, "File could not be found.");
+                savedAlert.showAndWait();
+            }
         });
 
 
@@ -342,7 +347,21 @@ public class Main extends Application {
         Button save = new Button("Save");
         save.setPadding(new Insets(5, 50, 5, 50));
 
-        save.setOnAction(e -> showSavedAlert(fileName.getText()));
+        // save.setOnAction(e -> showSavedAlert(fileName.getText()));
+        save.setOnAction(e -> {
+            boolean fileSaved = false;
+            fileSaved = socialNetwork.saveLog(fileName.getText());
+
+            // if file saves, send error message
+            if (!fileSaved) {
+                Alert savedAlert = new Alert(Alert.AlertType.ERROR,
+                    "Save unsuccessful. Please enter a valid filename.");
+                savedAlert.showAndWait();
+            } else {
+                Alert savedAlert = new Alert(Alert.AlertType.CONFIRMATION, "Save successful.");
+                savedAlert.showAndWait();
+            }
+        });
 
         Button nSave = new Button("Exit without saving");
         nSave.setPadding(new Insets(5, 20, 5, 20));
@@ -376,13 +395,6 @@ public class Main extends Application {
                 "Save unsuccessful. Please enter a valid filename.");
             savedAlert.showAndWait();
         }
-    }
-
-
-    private void showFileReadAlert() {
-
-
-
     }
 
     /**
