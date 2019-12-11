@@ -138,7 +138,6 @@ public class SocialNetwork {
 	 * @param user      the current vertex in the network
 	 * @param connected a list of all previously visited users in the traversal
 	 */
-	public List<String> getFriends(String user, List<String> connected) {
 	private List<String> getFriends(String user, List<String> connected) {
 
 		List<String> friends = allFriends(user);
