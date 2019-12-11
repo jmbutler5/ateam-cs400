@@ -62,6 +62,8 @@ public class Main extends Application {
     // Labels, fields, buttons that need to change on events
     private Label conCompLabel = new Label("Separate Networks: 0");
     private Label statusLabel = new Label("Status: " + statusMessage);
+    private Label numFriendsLabel = new Label("Friends: 0");
+    private Label numUsersLabel = new Label("Total Users: " + socialNetwork.getSize());
     private TextField search = new TextField();
     private Button shortestPathButton =
         new Button("Shortest path to " + socialNetwork.getCenterUser());
@@ -192,8 +194,6 @@ public class Main extends Application {
 
         //////////////////////////////////////////////////////////////////
 
-
-
         int buttonWidth = 200;
         shortestPathButton.setPrefWidth(buttonWidth);
         shortestPathButton.setOnAction(e -> shortestPathHelper(search));
@@ -214,7 +214,8 @@ public class Main extends Application {
         grid2.add(mutualFriendsButton, 0, 3);
         grid2.add(newCenterButton, 0, 4);
         grid2.add(conCompButton, 0, 5);
-        grid2.add(conCompLabel, 0, 6);
+        grid2.add(conCompLabel, 0, 8);
+        grid2.add(numUsersLabel, 0, 9);
         grid2.getChildren().add(statusLabel);
         grid2.setAlignment(Pos.CENTER);
 
@@ -239,13 +240,14 @@ public class Main extends Application {
 
         // add the Current User, showing labels to grid
         grid1.add(centerUserLabel, 0, 1);
-        grid1.add(showingLabel, 0, 2);
+        grid1.add(numFriendsLabel, 0, 2);
+        grid1.add(showingLabel, 0, 3);
         showingLabel.setUnderline(true);
 
         // add friends labels to grid
         for (int i = 0; i < 10; i++) {
 
-            grid1.add(friendLabelList.get(i), 0, i + 3);
+            grid1.add(friendLabelList.get(i), 0, i + 4);
         }
 
         // Make displayed data a VBox which is inserted into the Grid
@@ -313,6 +315,15 @@ public class Main extends Application {
             if (socialNetwork.readFromFile(fileName.getText())) {
                 Alert savedAlert = new Alert(Alert.AlertType.CONFIRMATION, "File read and loaded.");
                 savedAlert.showAndWait();
+
+                // update labels and buttons for first center user
+                shortestPathButton.setText("Shortest path to " + socialNetwork.getCenterUser());
+                newCenterButton.setText("Set " + socialNetwork.getCenterUser() + " as center");
+                centerUserLabel.setText("Center User: " + socialNetwork.getCenterUser());
+                showingLabel.setText("Showing: " + currentShowing);
+                searchedUser = socialNetwork.getCenterUser();
+                centerUserHelper(searchedUser);
+
             } else {
                 Alert savedAlert = new Alert(Alert.AlertType.ERROR, "File could not be found.");
                 savedAlert.showAndWait();
@@ -469,6 +480,9 @@ public class Main extends Application {
             showingLabel.setText("Showing: " + searchedUser + "'s friends");
             centerUserLabel.setText("Center User: " + searchedUser);
             statusLabel.setText("Status: User " + searchedUser + " is displayed");
+            numFriendsLabel.setText(
+                "Friends: " + socialNetwork.allFriends(socialNetwork.getCenterUser()).size());
+
             // change the friendList to the new user's friends
             friendList = (ArrayList<String>) socialNetwork.allFriends(searchedUser);
             // updateFriendList
@@ -476,6 +490,8 @@ public class Main extends Application {
         } else {
             statusLabel.setText("Status: User " + searchedUser + " not found");
         }
+
+        numUsersLabel.setText("Total Users: " + socialNetwork.getSize());
     }
 
     /**
@@ -530,15 +546,12 @@ public class Main extends Application {
 
                     String friend = displayList.get(i);
 
-                    /* TODO */ System.out.println("adding friend " + friend);
-
                     // display the name of the user
                     friendLabelList.get(i).setText(friend);
                     // on click, make the user center user
                     friendLabelList.get(i).setOnMouseClicked(e -> {
                         searchedUser = friend;
                         centerUserHelper(friend);
-
                     });
                 } else {
                     // if there is no element in the position of the list, set label to empty
