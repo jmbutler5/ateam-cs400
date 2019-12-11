@@ -103,4 +103,54 @@ class SocialNetworkTest {
 		System.out.println(network.mutualFriends("john", "jacob"));
 		
 	}
+	
+	/**
+	 * makes sure adding a single person works as intended
+	 */
+	@Test
+	void test006_processes_add_person_command_correctly() {
+		String message = network.processCommand("a jeff");
+		List<String> allUsers = network.getAllUsers();
+		
+		if(message != "") 
+			fail("unexpected error message: " + message);
+
+		if(!allUsers.contains("jeff"))
+			fail("jeff was not in the network after command 'a jeff'");
+		
+		if(allUsers.size() != 1) 
+			fail("The network has the wrong number of users after command 'a jeff'. " + allUsers.size() + ", but expected 1");		
+	}
+	
+	/**
+	 * makes sure adding a connection works as intended
+	 */
+	@Test
+	void test007_processes_add_edge_command_correctly() {
+		String message = network.processCommand("a jeff michelle");
+		List<String> allUsers = network.getAllUsers();
+		
+		if(message != "") 
+			fail("unexpected error message: " + message);
+
+		if(!allUsers.contains("jeff"))
+			fail("jeff was not in the network after command 'a jeff michelle'");
+		if(!allUsers.contains("michelle"))
+			fail("michelle was not in the network after command 'a jeff michelle'");
+		
+		if(allUsers.size() != 2) 
+			fail("The network has the wrong number of users. " + allUsers.size() + ", but expected 2");
+
+		List<String> friends = network.allFriends("jeff");
+		
+		if(!friends.contains("michelle")) 
+			fail("jeff should have michelle as a friend but he does not");
+		if(friends.size() != 1)
+			fail("jeff has an unexpected number of friends; " + friends.size() + ", expected 1");
+		
+		friends = network.allFriends("michelle");
+		
+		if(!friends.contains("jeff"))
+			fail("")
+	}
 }

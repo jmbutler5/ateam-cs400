@@ -257,6 +257,15 @@ public class SocialNetwork {
 		return graph.getAdjacentVerticesOf(user);
 	}
 
+	/**
+	 * finds all users registered in the network
+	 *  
+	 * @return returns a list of all users in the netwrok
+	 */
+	public List<String> getAllUsers(){
+		return graph.getAllVertices();
+	}
+	
 	public String getCenterUser() {
 		return centerUser;
 	}
@@ -448,7 +457,8 @@ public class SocialNetwork {
 	 * @return returns an error message if the command is invalid, otherwise returns
 	 *         an empty string
 	 */
-	private String processCommand(String command) {
+	public String processCommand(String command) {
+		command = command.trim();
 		
 		String[] parameters = getParameters(command);
 		if (parameters == null)
@@ -476,7 +486,7 @@ public class SocialNetwork {
 			break;
 
 		default:
-			return command.charAt(0) + "' is an invalid comand";
+			return command.charAt(0) + " is an invalid comand";
 		}
 		return "";
 	}
