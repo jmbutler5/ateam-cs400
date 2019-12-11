@@ -118,7 +118,6 @@ public class Main extends Application {
 
 		instruction.setPrefWidth(230);
 
-		// TODO: add functionality to add and remove
 		parameter1.setPromptText("User 1");
 		parameter1.getText();
 		parameter1.setPrefWidth(200);
@@ -127,9 +126,9 @@ public class Main extends Application {
 		parameter2.setPrefWidth(200);
 
 		add.setPrefWidth(230);
-		add.setOnAction(e -> addHelper(parameter1,parameter2));
+		add.setOnAction(e -> addHelper(parameter1, parameter2));
 		remove.setPrefWidth(230);
-		// remove.setOnAction(e -> removeHelper(parameter1,parameter2));
+		remove.setOnAction(e -> removeHelper(parameter1, parameter2));
 
 		instructionBox.getChildren().add(instruction);
 		commandButtons.getChildren().add(instructionBox);
@@ -512,27 +511,65 @@ public class Main extends Application {
 		// update the window
 	}
 
+	/**
+	 * helper method that handles the user click of add user/friendship button
+	 * 
+	 * @author aileen :)
+	 * @param parameter1 textfield with user1 (user input)
+	 * @param parameter2 textfield with user2 (user input)
+	 */
 	private void addHelper(TextField parameter1, TextField parameter2) {
 		// retrieve text from both text fields
 		String user1 = parameter1.getText();
 		String user2 = parameter2.getText();
-		// gotta have something in first text box
-		if (user1.isBlank());
-		// if user2 is empty, just add user1
-		else if (user2.isBlank()) {
-			socialNetwork.addUser(user1);
-			showingLabel.setText("New user: " + user1 + " added.");
-		}
+
+		// gotta have something in first text box, if not does nothing
+		if (user1.isBlank())
+			;
+		// if user2 is empty, call addUser with just first textbox entry
+		else if (user2.isBlank())
+			// check if user1 already exists
+			if (socialNetwork.getAllUsers().contains(user1))
+				showingLabel.setText(user1 + " already exists");
+			// user1 doesn't exist -> ADD!
+			else {
+				socialNetwork.addUser(user1);
+				showingLabel.setText("User: " + user1 + " in social network");
+			}
 		// both fields are not empty, add both users, create friendship
-		else if (!user1.isBlank() && !user2.isBlank()) {
+		else {
 			socialNetwork.addFriend(user1, user2);
-			showingLabel.setText("New friendship between " + user1 + " and " + user2 + " added.");
+			showingLabel.setText("Friendship between " + user1 + " and " + user2 + " in social network");
 		}
 		updateFriendLabelList(friendList);
 	}
 
 	private void removeHelper(TextField parameter1, TextField parameter2) {
+		// retrieve text from both text fields
+		String user1 = parameter1.getText();
+		String user2 = parameter2.getText();
 
+		// gotta have something in first text box, if not does nothing
+		if (user1.isBlank())
+			;
+		// user2 is empty, call removeUser with just first textbox entry
+		else if (user2.isBlank())
+			// check if user1 is in socialNetwork
+			// user1 exists -> REMOVE!
+			if (socialNetwork.getAllUsers().contains(user1)) {
+				socialNetwork.removeUser(user1);
+				showingLabel.setText("User: " + user1 + " removed");
+			} else
+				showingLabel.setText("User: " + user1 + " doesn't exist");
+		// both fields are not empty, remove friendship
+		else {
+			if (!socialNetwork.getAllUsers().contains(user1) || !socialNetwork.getAllUsers().contains(user2))
+				showingLabel.setText("Friendship doesn't exist");
+			else {
+				socialNetwork.removeFriend(user1, user2);
+				showingLabel.setText("User: " + user1 + " removed");
+			}
+		}
 	}
 
 	/**
@@ -585,19 +622,14 @@ public class Main extends Application {
 		String searchUser = search.getText();
 
 		// if not found, update message box to 'user not found' and update window
-		// running select(searchUser) should set them as center user in SocialNetwork
-		if (!socialNetwork.select(searchUser)) {
+		if (!socialNetwork.getAllUsers().contains(searchUser)) {
 			statusMessage = "Status: User " + searchUser + " not found";
 			// update the status label
 			statusLabel.setText(statusMessage);
-			// set the center user back
-			socialNetwork.select(centerUser);
 		} else {
 			// update the status label
 			statusLabel.setText("Status: Found user: " + searchUser);
 			this.searchedUser = searchUser;
-			// set the center user back
-			socialNetwork.select(centerUser);
 			// change the button labels to reflect searched user
 			shortestPathButton.setText("Shortest Path to " + searchUser);
 			newCenterButton.setText("Set " + searchUser + " as center");

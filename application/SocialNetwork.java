@@ -155,8 +155,8 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * finds the list of mutual friends of user1 and user 2.
-	 * If no mutual friends, returns empty list
+	 * finds the list of mutual friends of user1 and user 2. If no mutual friends,
+	 * returns empty list
 	 * 
 	 * @author Chase Flackey
 	 * 
@@ -180,9 +180,9 @@ public class SocialNetwork {
 	/**
 	 * finds the shortest path between user1 and user2, using a BFS
 	 * 
-	 * Returns an empty list if users are not in the same connected graph
-	 * Returns an empty list if user1 and user2 are the same user
-	 * Returns an empty list if either user is not present in the network
+	 * Returns an empty list if users are not in the same connected graph Returns an
+	 * empty list if user1 and user2 are the same user Returns an empty list if
+	 * either user is not present in the network
 	 * 
 	 * @author Chase Flackey
 	 * 
@@ -192,55 +192,53 @@ public class SocialNetwork {
 	 *         network
 	 */
 	public List<String> friendLink(String user1, String user2) {
-		
+
 		List<String> shortestPath = new ArrayList<String>();
 		// Verify both users are in the graph, and that both users are not the same
-		if(!graph.getAllVertices().contains(user2))
+		if (!graph.getAllVertices().contains(user2))
 			return null;
-		if(user1 == user2)
+		if (user1 == user2)
 			return shortestPath;
 		// Map to store the current node and its parent
-	    Map<String, String> prev = new HashMap<String, String>();
-	    // Use a queue to store the traversal
-	    Queue<String> tempPath = new LinkedList<String>();
-	    
-	    
-	    tempPath.add(user1);
-	    prev.put(user1, null);
+		Map<String, String> prev = new HashMap<String, String>();
+		// Use a queue to store the traversal
+		Queue<String> tempPath = new LinkedList<String>();
 
-	    while (tempPath.size() > 0) {
-	      String currentNode = tempPath.poll();
-	      List<String> friends = allFriends(currentNode);
+		tempPath.add(user1);
+		prev.put(user1, null);
 
-	      for (String friend : friends) {
+		while (tempPath.size() > 0) {
+			String currentNode = tempPath.poll();
+			List<String> friends = allFriends(currentNode);
 
-	        // set a boolean to keep track of visited nodes
-	        boolean visited = prev.containsKey(friend);
-	        if (visited) {
-	          continue;
-	        } else {
-	          tempPath.add(friend);
+			for (String friend : friends) {
 
-	          // Map keeps track of the shortest path
-	          prev.put(friend, currentNode);
+				// set a boolean to keep track of visited nodes
+				boolean visited = prev.containsKey(friend);
+				if (visited) {
+					continue;
+				} else {
+					tempPath.add(friend);
 
-	          // Once end node is reached shortest path can be found
-	          if (friend.equals(user2)) {
-	            break;
-	          }
-	        }
-	      }
-	    }
-	    
-	    String curNode = user2;
-	    while(curNode != null) {
-	    	// Add to beginning of list to preserve order
-	    	shortestPath.add(0, curNode);
-	    	curNode = prev.get(curNode);
-	    }
-		
+					// Map keeps track of the shortest path
+					prev.put(friend, currentNode);
 
-		if(!shortestPath.contains(user1) || !shortestPath.contains(user2))
+					// Once end node is reached shortest path can be found
+					if (friend.equals(user2)) {
+						break;
+					}
+				}
+			}
+		}
+
+		String curNode = user2;
+		while (curNode != null) {
+			// Add to beginning of list to preserve order
+			shortestPath.add(0, curNode);
+			curNode = prev.get(curNode);
+		}
+
+		if (!shortestPath.contains(user1) || !shortestPath.contains(user2))
 			return new ArrayList<String>();
 
 		return shortestPath;
@@ -259,13 +257,13 @@ public class SocialNetwork {
 
 	/**
 	 * finds all users registered in the network
-	 *  
-	 * @return returns a list of all users in the netwrok
+	 * 
+	 * @return returns a list of all users in the network
 	 */
-	public List<String> getAllUsers(){
+	public List<String> getAllUsers() {
 		return graph.getAllVertices();
 	}
-	
+
 	public String getCenterUser() {
 		return centerUser;
 	}
@@ -459,7 +457,7 @@ public class SocialNetwork {
 	 */
 	public String processCommand(String command) {
 		command = command.trim();
-		
+
 		String[] parameters = getParameters(command);
 		if (parameters == null)
 			return "unable to process parameters.";
@@ -533,8 +531,7 @@ public class SocialNetwork {
 			this.log = tempNetwork.log;
 			this.centerUser = tempNetwork.centerUser;
 
-			
-			//makes sure there was a selected user, even if there wasn't one specified
+			// makes sure there was a selected user, even if there wasn't one specified
 			if (centerUser == null) {
 				List<String> people = graph.getAllVertices();
 				if (!people.isEmpty())
@@ -547,14 +544,14 @@ public class SocialNetwork {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Getter for graph size
 	 * 
 	 * @return size
 	 */
 	public int getSize() {
-	    return graph.order();
+		return graph.order();
 	}
 
 	/**
@@ -567,12 +564,12 @@ public class SocialNetwork {
 	public boolean saveLog(String filename) {
 		try {
 			PrintWriter writer = new PrintWriter(filename);
-			
+
 			for (String command : log)
 				writer.println(command);
 
 			writer.close();
-			
+
 		} catch (FileNotFoundException e) {
 			return false;
 		}
