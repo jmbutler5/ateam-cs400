@@ -35,8 +35,8 @@ public class Main extends Application {
 
 	private SocialNetwork socialNetwork = new SocialNetwork();
 
-	private static final int WINDOW_WIDTH = 650;
-	private static final int WINDOW_HEIGHT = 600;
+	private static final int WINDOW_WIDTH = 525;
+	private static final int WINDOW_HEIGHT = 610;
 	private static final String APP_TITLE = "Social Network";
 
 	// Center of the GUI (menuBox and networkBox) are arranged on a grid
@@ -73,8 +73,8 @@ public class Main extends Application {
 	private Label showingLabel = new Label("Showing: " + currentShowing);
 
 	// components for allowing the user to add or remove people or friendships
-	private Label instruction1 = new Label("Only use the first box when adding/removing");
-	private Label instruction2 = new Label("a user, and use both for friendships");
+	private Label instruction = new Label(
+			"Only use the first box when \nadding/removing a user, \nand use both for friendships");
 	private Button add = new Button("Add User/Friendship");
 	private Button remove = new Button("Remove User/Friendship");
 	private TextField parameter1 = new TextField();
@@ -85,7 +85,7 @@ public class Main extends Application {
 
 		// WELCOME SCENE
 		welcome(primaryStage);
-		startScene = new Scene(startPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+		startScene = new Scene(startPane, WINDOW_WIDTH, 250);
 
 		// MAIN SCENE
 
@@ -107,7 +107,7 @@ public class Main extends Application {
 		mainPane.setCenter(rootGrid);
 
 		VBox bottom = new VBox();
-		bottom.setSpacing(10.0);
+		bottom.setSpacing(5.0);
 
 		HBox commandBox = new HBox();
 		commandBox.setSpacing(10.0);
@@ -116,8 +116,22 @@ public class Main extends Application {
 		VBox instructionBox = new VBox();
 		commandButtons.setSpacing(5.0);
 
-		instructionBox.getChildren().add(instruction1);
-		instructionBox.getChildren().add(instruction2);
+		instruction.setPrefWidth(230);
+
+		// TODO: add functionality to add and remove
+		parameter1.setPromptText("User 1");
+		parameter1.getText();
+		parameter1.setPrefWidth(200);
+		parameter2.setPromptText("User 2");
+		parameter2.getText();
+		parameter2.setPrefWidth(200);
+
+		add.setPrefWidth(230);
+		// add.setOnAction(e -> addHelper(parameter1,parameter2));
+		remove.setPrefWidth(230);
+		// remove.setOnAction(e -> removeHelper(parameter1,parameter2));
+
+		instructionBox.getChildren().add(instruction);
 		commandButtons.getChildren().add(instructionBox);
 		commandButtons.getChildren().add(add);
 		commandButtons.getChildren().add(remove);
@@ -167,7 +181,7 @@ public class Main extends Application {
 
 		// EXIT SCENE
 
-		exitScene = new Scene(exitPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+		exitScene = new Scene(exitPane, WINDOW_WIDTH, 250);
 
 		exiting();
 
@@ -217,7 +231,7 @@ public class Main extends Application {
 		searchButton.setOnAction(e -> searchHelper(search));
 		search.setPromptText("Enter username");
 		search.getText();
-		search.setPrefWidth(100);
+		search.setPrefWidth(130);
 
 		//////////////////////////////////////////////////////////////////
 
@@ -327,8 +341,11 @@ public class Main extends Application {
 
 	/**
 	 * Displays welcome GUI
+	 * 
+	 * @throws FileNotFoundException
 	 */
-	private void welcome(Stage primaryStage) {
+	private void welcome(Stage primaryStage) throws FileNotFoundException {
+		startPane.setTop(newImage("socialnetwork.png"));
 		HBox fileNameBox = new HBox();
 		fileNameBox.setSpacing(5);
 
@@ -365,7 +382,7 @@ public class Main extends Application {
 		});
 
 		fileNameBox.getChildren().addAll(label, fileName, open);
-
+		fileNameBox.setPadding(new Insets(50, 0, 30, 45));
 		// confirm -> button.setPadding(new Insets(0, 0, 0, 118));
 		startPane.setPadding(new Insets(10, 10, 10, 10));
 
@@ -375,8 +392,10 @@ public class Main extends Application {
 
 	/**
 	 * Displays exit GUI
+	 * @throws FileNotFoundException 
 	 */
-	private void exiting() {
+	private void exiting() throws FileNotFoundException {
+		exitPane.setTop(newImage("socialnetwork.png"));
 		HBox buttons = new HBox();
 		HBox file = new HBox();
 
@@ -386,6 +405,7 @@ public class Main extends Application {
 		buttons.setSpacing(5);
 
 		TextField fileName = new TextField("SocialNetworkSave");
+		fileName.setPrefWidth(200);
 		Label label = new Label("Enter file name to save to: ");
 		Button save = new Button("Save");
 		save.setPadding(new Insets(5, 50, 5, 50));
@@ -412,12 +432,15 @@ public class Main extends Application {
 
 		buttons.getChildren().add(save);
 		buttons.getChildren().add(nSave);
+		buttons.setPadding(new Insets(0,0,0,100));
+		
 		file.getChildren().add(label);
 		file.getChildren().add(fileName);
+		file.setPadding(new Insets(30,0,30,65));
 
 		// Main layout is Border Pane example (top,left,center,right,bottom)
 		exitPane.setPadding(new Insets(10, 10, 10, 10));
-		exitPane.setTop(file);
+		exitPane.setCenter(file);
 		exitPane.setBottom(buttons);
 
 	}
