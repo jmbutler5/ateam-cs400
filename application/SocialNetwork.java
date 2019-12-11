@@ -194,7 +194,11 @@ public class SocialNetwork {
 	public List<String> friendLink(String user1, String user2) {
 		
 		List<String> shortestPath = new ArrayList<String>();
-		
+		// Verify both users are in the graph, and that both users are not the same
+		if(!graph.getAllVertices().contains(user2))
+			return null;
+		if(user1 == user2)
+			return shortestPath;
 		// Map to store the current node and its parent
 	    Map<String, String> prev = new HashMap<String, String>();
 	    // Use a queue to store the traversal
