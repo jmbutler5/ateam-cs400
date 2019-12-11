@@ -567,9 +567,10 @@ public class Main extends Application {
 				showingLabel.setText("Friendship doesn't exist");
 			else {
 				socialNetwork.removeFriend(user1, user2);
-				showingLabel.setText("User: " + user1 + " removed");
+				showingLabel.setText("Friendship removed");
 			}
 		}
+		updateFriendLabelList(friendList);
 	}
 
 	/**
@@ -614,10 +615,6 @@ public class Main extends Application {
 	 * @author connorkubiak
 	 */
 	private void searchHelper(TextField search) {
-
-		// temporary placeholder for the center user
-		String centerUser = socialNetwork.getCenterUser();
-
 		// retrieve text from text box
 		String searchUser = search.getText();
 
