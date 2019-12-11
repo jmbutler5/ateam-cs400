@@ -450,8 +450,8 @@ public class Main extends Application {
         String searchUser = search.getText();
         // get list of users in shortest path -- this is null if user is not found
         try {
-            friendList = (ArrayList<String>) socialNetwork.friendLink(searchUser,
-                socialNetwork.getCenterUser());
+            friendList = (ArrayList<String>) socialNetwork.friendLink(
+            		socialNetwork.getCenterUser(),searchUser);
             showingLabel.setText("Showing: Shortest path from " + socialNetwork.getCenterUser()
                 + " to " + searchUser);
             updateFriendLabelList(friendList);
