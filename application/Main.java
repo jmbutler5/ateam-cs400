@@ -127,7 +127,7 @@ public class Main extends Application {
 		parameter2.setPrefWidth(200);
 
 		add.setPrefWidth(230);
-		// add.setOnAction(e -> addHelper(parameter1,parameter2));
+		add.setOnAction(e -> addHelper(parameter1,parameter2));
 		remove.setPrefWidth(230);
 		// remove.setOnAction(e -> removeHelper(parameter1,parameter2));
 
@@ -392,7 +392,8 @@ public class Main extends Application {
 
 	/**
 	 * Displays exit GUI
-	 * @throws FileNotFoundException 
+	 * 
+	 * @throws FileNotFoundException
 	 */
 	private void exiting() throws FileNotFoundException {
 		exitPane.setTop(newImage("socialnetwork.png"));
@@ -432,11 +433,11 @@ public class Main extends Application {
 
 		buttons.getChildren().add(save);
 		buttons.getChildren().add(nSave);
-		buttons.setPadding(new Insets(0,0,0,100));
-		
+		buttons.setPadding(new Insets(0, 0, 0, 100));
+
 		file.getChildren().add(label);
 		file.getChildren().add(fileName);
-		file.setPadding(new Insets(30,0,30,65));
+		file.setPadding(new Insets(30, 0, 30, 65));
 
 		// Main layout is Border Pane example (top,left,center,right,bottom)
 		exitPane.setPadding(new Insets(10, 10, 10, 10));
@@ -509,6 +510,29 @@ public class Main extends Application {
 			statusLabel.setText("Status: User " + searchUser + " not found");
 		}
 		// update the window
+	}
+
+	private void addHelper(TextField parameter1, TextField parameter2) {
+		// retrieve text from both text fields
+		String user1 = parameter1.getText();
+		String user2 = parameter2.getText();
+		// gotta have something in first text box
+		if (user1.isBlank());
+		// if user2 is empty, just add user1
+		else if (user2.isBlank()) {
+			socialNetwork.addUser(user1);
+			showingLabel.setText("New user: " + user1 + " added.");
+		}
+		// both fields are not empty, add both users, create friendship
+		else if (!user1.isBlank() && !user2.isBlank()) {
+			socialNetwork.addFriend(user1, user2);
+			showingLabel.setText("New friendship between " + user1 + " and " + user2 + " added.");
+		}
+		updateFriendLabelList(friendList);
+	}
+
+	private void removeHelper(TextField parameter1, TextField parameter2) {
+
 	}
 
 	/**
