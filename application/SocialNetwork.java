@@ -5,8 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class SocialNetwork {
 
@@ -173,8 +176,7 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * finds the shortest path between user1 and user2, using an implemenation of
-	 * Dijkstra's algorithm
+	 * finds the shortest path between user1 and user2, using a BFS
 	 * 
 	 * @author Chase Flackey
 	 * 
@@ -187,19 +189,52 @@ public class SocialNetwork {
 		
 		List<String> shortestPath = new ArrayList<String>();
 		
-		HashMap<String, Boolean> visted = new HashMap<String,Boolean>();
+		HashMap<String, Boolean> visited = new HashMap<String,Boolean>();
 		
 		//Verify both users are in the graph, and that both users are not the same
+		if((!graph.getAllVertices().contains(user1)) || (!graph.getAllVertices().contains(user2)))
+			return null;
+		if(user1 == user2)
+			return null;
 		
 		// Use a BFS to find all the paths between two 
-		Queue<String>
+		Queue<String> q = new LinkedList<String>();
+		Stack<String> s = new Stack<String>();
 		
-
-		// HashMap<String, String>
-
-		// TODO: Temporary implementation for GUI testing purposes
-		return graph.getAdjacentVerticesOf(user1);
-
+		q.add(user1);
+		s.add(user1);
+		visited.put(user1,true);
+		
+		while(!q.isEmpty()) {
+			String current = q.poll();
+			List<String> friendList = allFriends(current);
+			for (String friend : friendList) {
+				if(!visited.containsKey(friend)) {
+					q.add(friend);
+					visited.put(friend, true);
+					s.add(friend);
+					if(current == user2)
+						break;	
+				}
+			}
+		}
+		
+		// Select shortest path
+		
+		String curNode = user2;
+		String currentSrc = user2;
+		shortestPath.add(user2);
+		while(!s.isEmpty()) {
+			curNode = s.pop();
+			if(allFriends(curNode).contains(currentSrc)) {
+				shortestPath.add(curNode);
+				currentSrc = curNode;
+				if(curNode == user1)
+					break;
+			}
+		}
+		
+		return shortestPath;
 	}
 
 	/**

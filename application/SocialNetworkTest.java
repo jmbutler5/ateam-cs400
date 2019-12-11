@@ -66,4 +66,15 @@ class SocialNetworkTest {
 		//if(!network.mutualFriends("john","joe").equals(mutual))
 			//fail("Correct list of mutual friends not returned");
 	}
+	
+	/**
+	 * Tests the friendLink method
+	 */
+	@Test
+	void test003_friendLink() {
+		network.addFriend("john","amy");
+		network.addFriend("amy","joe");
+		network.addFriend("joe", "jacob");
+		System.out.println(network.friendLink("john", "jacob"));
+	}
 }
