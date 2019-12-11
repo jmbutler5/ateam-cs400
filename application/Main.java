@@ -35,7 +35,7 @@ public class Main extends Application {
 
 	private SocialNetwork socialNetwork = new SocialNetwork();
 
-	private static final int WINDOW_WIDTH = 600;
+	private static final int WINDOW_WIDTH = 650;
 	private static final int WINDOW_HEIGHT = 600;
 	private static final String APP_TITLE = "Social Network";
 
@@ -131,7 +131,7 @@ public class Main extends Application {
 		bottom.getChildren().add(commandBox);
 
 		HBox controlButtons = new HBox();
-		controlButtons.setSpacing(WINDOW_WIDTH - 150);
+		controlButtons.setSpacing(WINDOW_WIDTH - 125);
 		// add undo button
 		Button undo = new Button("Undo");
 		undo.setOnAction(e -> {
