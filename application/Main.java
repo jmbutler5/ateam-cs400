@@ -530,16 +530,18 @@ public class Main extends Application {
 		else if (user2.isBlank())
 			// check if user1 already exists
 			if (socialNetwork.getAllUsers().contains(user1))
-				showingLabel.setText(user1 + " already exists");
+				statusLabel.setText("Status: " + user1 + " already exists");
 			// user1 doesn't exist -> ADD!
 			else {
 				socialNetwork.addUser(user1);
-				showingLabel.setText("User: " + user1 + " in social network");
+				statusLabel.setText("Status: User: " + user1 + " added");
+				socialNetwork.select(user1);
+				centerUserHelper(user1);
 			}
 		// both fields are not empty, add both users, create friendship
 		else {
 			socialNetwork.addFriend(user1, user2);
-			showingLabel.setText("Friendship between " + user1 + " and " + user2 + " in social network");
+			statusLabel.setText("Status: Friendship between " + user1 + " and " + user2 + " added");
 		}
 		updateFriendLabelList(friendList);
 	}
@@ -558,16 +560,16 @@ public class Main extends Application {
 			// user1 exists -> REMOVE!
 			if (socialNetwork.getAllUsers().contains(user1)) {
 				socialNetwork.removeUser(user1);
-				showingLabel.setText("User: " + user1 + " removed");
+				statusLabel.setText("Status: User: " + user1 + " removed");
 			} else
-				showingLabel.setText("User: " + user1 + " doesn't exist");
+				statusLabel.setText("Status: User: " + user1 + " doesn't exist");
 		// both fields are not empty, remove friendship
 		else {
 			if (!socialNetwork.getAllUsers().contains(user1) || !socialNetwork.getAllUsers().contains(user2))
-				showingLabel.setText("Friendship doesn't exist");
+				statusLabel.setText("Status: Friendship doesn't exist");
 			else {
 				socialNetwork.removeFriend(user1, user2);
-				showingLabel.setText("Friendship removed");
+				statusLabel.setText("Status: Friendship removed");
 			}
 		}
 		updateFriendLabelList(friendList);
