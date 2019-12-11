@@ -11,9 +11,6 @@ public class SocialNetwork {
 
 	// the user being displayed
 	private String centerUser;
-	
-	// the number of users
-	private int numUsers = 0;
 
 	// keeps track of the log so we can print it to a file
 	// we have to actually keep track of operations (i.e. undo), so we can't just

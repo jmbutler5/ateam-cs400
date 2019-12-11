@@ -323,6 +323,7 @@ public class Main extends Application {
                 showingLabel.setText("Showing: " + currentShowing);
                 searchedUser = socialNetwork.getCenterUser();
                 centerUserHelper(searchedUser);
+                conCompHelper();
 
             } else {
                 Alert savedAlert = new Alert(Alert.AlertType.ERROR, "File could not be found.");
@@ -527,6 +528,9 @@ public class Main extends Application {
             shortestPathButton.setText("Shortest Path to " + searchUser);
             newCenterButton.setText("Set " + searchUser + " as center");
         }
+        
+        // update number of connected components
+        conCompHelper();
     }
 
     /**
