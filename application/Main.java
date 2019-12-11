@@ -454,6 +454,7 @@ public class Main extends Application {
                 socialNetwork.getCenterUser());
             showingLabel.setText("Showing: Shortest path from " + socialNetwork.getCenterUser()
                 + " to " + searchUser);
+            updateFriendLabelList(friendList);
         } catch (NullPointerException e) {
             statusLabel.setText("Status: User " + searchUser + " not found");
         }
