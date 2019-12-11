@@ -32,8 +32,8 @@ public class Main extends Application {
 
 	private SocialNetwork socialNetwork = new SocialNetwork();
 
-	private static final int WINDOW_WIDTH = 515;
-	private static final int WINDOW_HEIGHT = 510;
+	private static final int WINDOW_WIDTH = 600;
+	private static final int WINDOW_HEIGHT = 600;
 	private static final String APP_TITLE = "Social Network";
 
 	// Center of the GUI (menuBox and networkBox) are arranged on a grid
@@ -70,8 +70,10 @@ public class Main extends Application {
 	private Label showingLabel = new Label("Showing: " + currentShowing);
 
 	// components for allowing the user to add or remove people or friendships
-	private Label add = new Label("Add User/Friendship (first box only)");
-	private Label remove = new Label("Remove User/Friendship");
+	private Label instruction1 = new Label("Only use the first box when adding/removing");
+	private Label instruction2 = new Label("a user, and use both for friendships");
+	private Button add = new Button("Add User/Friendship");
+	private Button remove = new Button("Remove User/Friendship");
 	private TextField parameter1 = new TextField();
 	private TextField parameter2 = new TextField(); 
 	
@@ -110,11 +112,18 @@ public class Main extends Application {
 		mainPane.setCenter(rootGrid);
 
 		VBox bottom = new VBox();
+		bottom.setSpacing(10.0);
 		
 		HBox commandBox = new HBox();
 		commandBox.setSpacing(10.0);
 		
 		VBox commandButtons = new VBox();
+		VBox instructionBox = new VBox();
+		commandButtons.setSpacing(5.0);
+		
+		instructionBox.getChildren().add(instruction1);
+		instructionBox.getChildren().add(instruction2);
+		commandButtons.getChildren().add(instructionBox);
 		commandButtons.getChildren().add(add);
 		commandButtons.getChildren().add(remove);
 		
@@ -122,16 +131,18 @@ public class Main extends Application {
 		commandBox.getChildren().add(parameter1);
 		commandBox.getChildren().add(parameter2);
 		
+		commandBox.setAlignment(Pos.CENTER_LEFT);
 		
 		bottom.getChildren().add(commandBox);
 		
 		HBox controlButtons = new HBox();
+		controlButtons.setSpacing(WINDOW_WIDTH-150);
 		// add undo button
 		Button undo = new Button("Undo");
 		undo.setOnAction(e -> {
 			String message = socialNetwork.undo();
 			if (!message.equals("")) {
-				statusLabel.setText("Status: Could not Undo");
+				statusLabel.setText("Status: Could not Undo, " + message);
 			} else {
 				updateFriendLabelList(friendList);
 			}
@@ -139,14 +150,18 @@ public class Main extends Application {
 		controlButtons.getChildren().add(undo);
 
 		// add exit button
+		HBox exitBox = new HBox();
+		exitBox.setAlignment(Pos.CENTER_RIGHT);
+		
 		Button toExit = new Button("Done");
-
 		toExit.setOnAction(e -> primaryStage.setScene(exitScene)); // on click - goes to exitScene
-		controlButtons.getChildren().add(toExit);
-
+		
+		exitBox.getChildren().add(toExit);
+		controlButtons.getChildren().add(exitBox);
 		
 		bottom.getChildren().add(controlButtons);
-		
+
+		bottom.setPadding(new Insets(10, 10, 10, 10));
 		mainPane.setBottom(bottom);
 
 		topBox();
