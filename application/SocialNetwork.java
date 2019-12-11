@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
@@ -193,62 +194,55 @@ public class SocialNetwork {
 	public List<String> friendLink(String user1, String user2) {
 		
 		List<String> shortestPath = new ArrayList<String>();
-		
-		HashMap<String, Boolean> visited = new HashMap<String,Boolean>();
-		
-		//Verify both users are in the graph, and that both users are not the same
-		if((!graph.getAllVertices().contains(user1)) || (!graph.getAllVertices().contains(user2)))
-			return shortestPath;
+		// Verify both users are in the graph, and that both users are not the same
+		if(!graph.getAllVertices().contains(user2))
+			return null;
 		if(user1 == user2)
 			return shortestPath;
+		// Map to store the current node and its parent
+	    Map<String, String> prev = new HashMap<String, String>();
+	    // Use a queue to store the traversal
+	    Queue<String> tempPath = new LinkedList<String>();
+	    
+	    
+	    tempPath.add(user1);
+	    prev.put(user1, null);
+
+	    while (tempPath.size() > 0) {
+	      String currentNode = tempPath.poll();
+	      List<String> friends = allFriends(currentNode);
+
+	      for (String friend : friends) {
+
+	        // set a boolean to keep track of visited nodes
+	        boolean visited = prev.containsKey(friend);
+	        if (visited) {
+	          continue;
+	        } else {
+	          tempPath.add(friend);
+
+	          // Map keeps track of the shortest path
+	          prev.put(friend, currentNode);
+
+	          // Once end node is reached shortest path can be found
+	          if (friend.equals(user2)) {
+	            break;
+	          }
+	        }
+	      }
+	    }
+	    
+	    String curNode = user2;
+	    while(curNode != null) {
+	    	// Add to beginning of list to preserve order
+	    	shortestPath.add(0, curNode);
+	    	curNode = prev.get(curNode);
+	    }
 		
-		// Use a BFS to find all the paths between two 
-		Stack<String> s = new Stack<String>();
-		Queue<String> q = new LinkedList<String>();
-		
-		visited.put(user1,true);
-		s.add(user1);
-		q.add(user1);
-		
-		
-		// Generate a queue and a stack of the path between user1 and user2
-		while(!q.isEmpty()) {
-			String current = q.poll();
-			List<String> friendList = allFriends(current);
-			for (String friend : friendList) {
-				if(!visited.containsKey(friend)) {
-					q.add(friend);
-					visited.put(friend, true);
-					s.add(friend);
-					// end of path is found
-					if(current == user2)
-						break;	
-				}
-			}
-		}
-		
-		// generate the shortest path by popping nodes off the stack
-		String curNode;
-		String curSrc = user2;
-		
-		// Base case, add the last user 
-		shortestPath.add(user2);
-		while(!s.isEmpty()) {
-			curNode = s.pop();
-			if(allFriends(curNode).contains(curSrc)) {
-				shortestPath.add(curNode);
-				curSrc = curNode;
-				// once destination is reached, path is complete
-				if(curNode == user1)
-					break;
-			}
-		}
-		
-		// Verify that the path contains both users, if not, users are not part
-		// of the same connected group, and an empty list should be returned.
-		if(!shortestPath.contains(user1))
+
+		if(!shortestPath.contains(user1) || !shortestPath.contains(user2))
 			return new ArrayList<String>();
-		
+
 		return shortestPath;
 	}
 

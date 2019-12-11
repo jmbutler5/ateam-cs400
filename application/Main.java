@@ -478,6 +478,8 @@ public class Main extends Application {
 		try {
 			friendList = (ArrayList<String>) socialNetwork.friendLink(searchUser, socialNetwork.getCenterUser());
 			showingLabel.setText("Showing: Shortest path from " + socialNetwork.getCenterUser() + " to " + searchUser);
+			if(friendList.isEmpty())
+				showingLabel.setText("Friend path not found");
 			updateFriendLabelList(friendList);
 		} catch (NullPointerException e) {
 			statusLabel.setText("Status: User " + searchUser + " not found");

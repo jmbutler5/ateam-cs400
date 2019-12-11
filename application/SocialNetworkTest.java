@@ -86,10 +86,10 @@ class SocialNetworkTest {
 	 */
 	@Test
 	void test004_friendLink_disconnected() {
-		network.addFriend("john", "amy");
-		network.addFriend("joe", "jacob");
-		// System.out.println(network.friendLink("john", "jacob"));
-
+		network.addFriend("steven","antonio");
+		network.addFriend("antonio", "alex");
+		network.addFriend("steven", "alex");
+		System.out.println(network.friendLink("steven", "alex"));
 	}
 
 	/**
