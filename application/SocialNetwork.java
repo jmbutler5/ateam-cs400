@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -166,7 +167,14 @@ public class SocialNetwork {
 	 */
 	public List<String> friendLink(String user1, String user2) {
 		
-		//HashMap<String, String> 
+		List<String> shortestPath = new ArrayList<String>();
+		
+		HashMap<String, Boolean> visted = new HashMap<String,Boolean>();
+		
+		//Verify both users are in the graph, and that both users are not the same
+		
+		// Use a BFS to find all the paths between two 
+		Queue<String>
 		
 		// TODO: Temporary implementation for GUI testing purposes
 		return graph.getAdjacentVerticesOf(user1);
@@ -235,7 +243,6 @@ public class SocialNetwork {
 					// once found, select that person
 					lastCommand = log.get(i);
 					message = processCommand(lastCommand);
-
 					// I don't actually check if the previous command was valid in this case, but I
 					// don't think that there is any way for there to be an invalid command
 					if (message.equals(""))
