@@ -154,7 +154,8 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * finds the list of mutual friends of user1 and user 2
+	 * finds the list of mutual friends of user1 and user 2.
+	 * If no mutual friends, returns empty list
 	 * 
 	 * @author Chase Flackey
 	 * 
@@ -178,6 +179,10 @@ public class SocialNetwork {
 	/**
 	 * finds the shortest path between user1 and user2, using a BFS
 	 * 
+	 * Returns an empty list if users are not in the same connected graph
+	 * Returns an empty list if user1 and user2 are the same user
+	 * Returns an empty list if either user is not present in the network
+	 * 
 	 * @author Chase Flackey
 	 * 
 	 * @param user1 the name of a user in the graph
@@ -193,18 +198,20 @@ public class SocialNetwork {
 		
 		//Verify both users are in the graph, and that both users are not the same
 		if((!graph.getAllVertices().contains(user1)) || (!graph.getAllVertices().contains(user2)))
-			return null;
+			return shortestPath;
 		if(user1 == user2)
-			return null;
+			return shortestPath;
 		
 		// Use a BFS to find all the paths between two 
-		Queue<String> q = new LinkedList<String>();
 		Stack<String> s = new Stack<String>();
+		Queue<String> q = new LinkedList<String>();
 		
-		q.add(user1);
-		s.add(user1);
 		visited.put(user1,true);
+		s.add(user1);
+		q.add(user1);
 		
+		
+		// Generate a queue and a stack of the path between user1 and user2
 		while(!q.isEmpty()) {
 			String current = q.poll();
 			List<String> friendList = allFriends(current);
@@ -213,26 +220,34 @@ public class SocialNetwork {
 					q.add(friend);
 					visited.put(friend, true);
 					s.add(friend);
+					// end of path is found
 					if(current == user2)
 						break;	
 				}
 			}
 		}
 		
-		// Select shortest path
+		// generate the shortest path by popping nodes off the stack
+		String curNode;
+		String curSrc = user2;
 		
-		String curNode = user2;
-		String currentSrc = user2;
+		// Base case, add the last user 
 		shortestPath.add(user2);
 		while(!s.isEmpty()) {
 			curNode = s.pop();
-			if(allFriends(curNode).contains(currentSrc)) {
+			if(allFriends(curNode).contains(curSrc)) {
 				shortestPath.add(curNode);
-				currentSrc = curNode;
+				curSrc = curNode;
+				// once destination is reached, path is complete
 				if(curNode == user1)
 					break;
 			}
 		}
+		
+		// Verify that the path contains both users, if not, users are not part
+		// of the same connected group, and an empty list should be returned.
+		if(!shortestPath.contains(user1))
+			return new ArrayList<String>();
 		
 		return shortestPath;
 	}

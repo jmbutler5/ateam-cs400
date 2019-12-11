@@ -60,7 +60,7 @@ class SocialNetworkTest {
 		network.addFriend("amy","joe");
 		network.addFriend("john", "mike");
 		network.addFriend("joe","mike");
-		System.out.println(network.mutualFriends("john","joe"));
+		//System.out.println(network.mutualFriends("john","joe"));
 		List<String> mutual = new ArrayList<String>();
 		mutual.add("amy");
 		//if(!network.mutualFriends("john","joe").equals(mutual))
@@ -73,8 +73,33 @@ class SocialNetworkTest {
 	@Test
 	void test003_friendLink() {
 		network.addFriend("john","amy");
+		network.addFriend("amy","longer");
+		network.addFriend("longer","longest");
+		network.addFriend("longest", "joe");
 		network.addFriend("amy","joe");
 		network.addFriend("joe", "jacob");
-		System.out.println(network.friendLink("john", "jacob"));
+		//System.out.println(network.friendLink("john", "jacob"));
+	}
+	
+	/**
+	 * Tests output of friendLink if users are not in connected tree
+	 */
+	@Test
+	void test004_friendLink_disconnected() {
+		network.addFriend("john","amy");
+		network.addFriend("joe", "jacob");
+		//System.out.println(network.friendLink("john", "jacob"));
+		
+	}
+	
+	/**
+	 * Tests output of mutualFriends if users are not in connected tree
+	 */
+	@Test
+	void test005_mutualFriends_disconnected() {
+		network.addFriend("john","amy");
+		network.addFriend("joe", "jacob");
+		System.out.println(network.mutualFriends("john", "jacob"));
+		
 	}
 }
