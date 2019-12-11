@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -14,6 +16,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -43,7 +46,7 @@ public class Main extends Application {
 	private BorderPane startPane = new BorderPane();
 	private BorderPane mainPane = new BorderPane();
 	private BorderPane exitPane = new BorderPane();
-	
+
 	// the current list of friends displayed
 	private ArrayList<String> friendList = (ArrayList<String>) socialNetwork.allFriends(socialNetwork.getCenterUser());
 
@@ -75,21 +78,13 @@ public class Main extends Application {
 	private Button add = new Button("Add User/Friendship");
 	private Button remove = new Button("Remove User/Friendship");
 	private TextField parameter1 = new TextField();
-	private TextField parameter2 = new TextField(); 
-	
+	private TextField parameter2 = new TextField();
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
 		// WELCOME SCENE
-
-		welcome();
-
-		// add confirm button (move from start scene to main scene)
-		VBox confirm = new VBox();
-		Button toMain = new Button("Confirm");
-		toMain.setOnAction(e -> primaryStage.setScene(mainScene)); // on click - goes to mainScene
-		confirm.getChildren().add(toMain);
-		startPane.setBottom(confirm);
+		welcome(primaryStage);
 		startScene = new Scene(startPane, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		// MAIN SCENE
@@ -97,7 +92,7 @@ public class Main extends Application {
 		// save args example
 		args = this.getParameters().getRaw();
 
-		// initalize all friend labels to empty string
+		// initialize all friend labels to empty string
 		for (int i = 0; i < 10; i++) {
 			Label empty = new Label("");
 			friendLabelList.add(empty);
@@ -113,30 +108,30 @@ public class Main extends Application {
 
 		VBox bottom = new VBox();
 		bottom.setSpacing(10.0);
-		
+
 		HBox commandBox = new HBox();
 		commandBox.setSpacing(10.0);
-		
+
 		VBox commandButtons = new VBox();
 		VBox instructionBox = new VBox();
 		commandButtons.setSpacing(5.0);
-		
+
 		instructionBox.getChildren().add(instruction1);
 		instructionBox.getChildren().add(instruction2);
 		commandButtons.getChildren().add(instructionBox);
 		commandButtons.getChildren().add(add);
 		commandButtons.getChildren().add(remove);
-		
+
 		commandBox.getChildren().add(commandButtons);
 		commandBox.getChildren().add(parameter1);
 		commandBox.getChildren().add(parameter2);
-		
+
 		commandBox.setAlignment(Pos.CENTER_LEFT);
-		
+
 		bottom.getChildren().add(commandBox);
-		
+
 		HBox controlButtons = new HBox();
-		controlButtons.setSpacing(WINDOW_WIDTH-150);
+		controlButtons.setSpacing(WINDOW_WIDTH - 150);
 		// add undo button
 		Button undo = new Button("Undo");
 		undo.setOnAction(e -> {
@@ -152,13 +147,13 @@ public class Main extends Application {
 		// add exit button
 		HBox exitBox = new HBox();
 		exitBox.setAlignment(Pos.CENTER_RIGHT);
-		
+
 		Button toExit = new Button("Done");
 		toExit.setOnAction(e -> primaryStage.setScene(exitScene)); // on click - goes to exitScene
-		
+
 		exitBox.getChildren().add(toExit);
 		controlButtons.getChildren().add(exitBox);
-		
+
 		bottom.getChildren().add(controlButtons);
 
 		bottom.setPadding(new Insets(10, 10, 10, 10));
@@ -333,7 +328,7 @@ public class Main extends Application {
 	/**
 	 * Displays welcome GUI
 	 */
-	private void welcome() {
+	private void welcome(Stage primaryStage) {
 		HBox fileNameBox = new HBox();
 		fileNameBox.setSpacing(5);
 
@@ -343,21 +338,27 @@ public class Main extends Application {
 		Label label = new Label("Enter file name to read from: ");
 
 		open.setOnAction(e -> {
-			// if file read successfully, display confirmation, else display error
+			// file read successfully, move to main scene
 			if (socialNetwork.readFromFile(fileName.getText())) {
-				Alert savedAlert = new Alert(Alert.AlertType.CONFIRMATION, "File read and loaded.");
-				savedAlert.showAndWait();
 
-				// update labels and buttons for first center user
-				shortestPathButton.setText("Shortest path to " + socialNetwork.getCenterUser());
-				newCenterButton.setText("Set " + socialNetwork.getCenterUser() + " as center");
-				centerUserLabel.setText("Center User: " + socialNetwork.getCenterUser());
-				showingLabel.setText("Showing: " + currentShowing);
-				searchedUser = socialNetwork.getCenterUser();
-				centerUserHelper(searchedUser);
-				conCompHelper();
+				Alert savedAlert = new Alert(Alert.AlertType.INFORMATION, "File read and loaded.");
+				Optional<ButtonType> result = savedAlert.showAndWait();
+				if (!result.isPresent())
+					;
+				else if (result.get() == ButtonType.OK) {
+					// update labels and buttons for first center user
+					shortestPathButton.setText("Shortest path to " + socialNetwork.getCenterUser());
+					newCenterButton.setText("Set " + socialNetwork.getCenterUser() + " as center");
+					centerUserLabel.setText("Center User: " + socialNetwork.getCenterUser());
+					showingLabel.setText("Showing: " + currentShowing);
+					searchedUser = socialNetwork.getCenterUser();
+					centerUserHelper(searchedUser);
+					conCompHelper();
+					primaryStage.setScene(mainScene);
+				}
 
 			} else {
+				// file not read successfully
 				Alert savedAlert = new Alert(Alert.AlertType.ERROR, "File could not be found.");
 				savedAlert.showAndWait();
 			}
@@ -478,7 +479,7 @@ public class Main extends Application {
 		try {
 			friendList = (ArrayList<String>) socialNetwork.friendLink(searchUser, socialNetwork.getCenterUser());
 			showingLabel.setText("Showing: Shortest path from " + socialNetwork.getCenterUser() + " to " + searchUser);
-			if(friendList.isEmpty())
+			if (friendList.isEmpty())
 				showingLabel.setText("Friend path not found");
 			updateFriendLabelList(friendList);
 		} catch (NullPointerException e) {
