@@ -543,6 +543,7 @@ public class Main extends Application {
 			socialNetwork.addFriend(user1, user2);
 			statusLabel.setText("Status: Friendship between " + user1 + " and " + user2 + " added");
 		}
+		friendList = (ArrayList<String>) socialNetwork.allFriends(socialNetwork.getCenterUser());
 		updateFriendLabelList(friendList);
 	}
 
@@ -572,6 +573,7 @@ public class Main extends Application {
 				statusLabel.setText("Status: Friendship removed");
 			}
 		}
+		friendList = (ArrayList<String>) socialNetwork.allFriends(socialNetwork.getCenterUser());
 		updateFriendLabelList(friendList);
 	}
 
